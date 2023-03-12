@@ -1,3 +1,4 @@
+import ToggleScheme from "@/components/ToggleScheme";
 import Layout from "@/components/_layout";
 import { Anchor, Button, Container } from "@mantine/core";
 import Link from "next/link";
@@ -7,6 +8,7 @@ export default function index() {
   return (
     <Layout>
       <Container>dd</Container>
+      <ToggleScheme />
     </Layout>
   );
 }

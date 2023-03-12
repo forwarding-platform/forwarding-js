@@ -18,22 +18,30 @@ import {
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import Link from "next/link";
 import AppLogo from "./_logo";
+import { usePathname } from "next/navigation";
 
 const useStyles = createStyles((theme) => ({
   link: {
     display: "flex",
     alignItems: "center",
-    height: "100%",
+    height: "50%",
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    marginLeft: "1px",
+    marginRight: "1px",
     textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[0]
+        : theme.colors.gray[8],
     fontWeight: 500,
     fontSize: theme.fontSizes.sm,
+    transition: "ease 500ms",
 
     [theme.fn.smallerThan("sm")]: {
       height: rem(42),
@@ -46,8 +54,19 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+          : theme.colors.gray[2],
     }),
+  },
+
+  linkActive: {
+    "&, &:hover": {
+      backgroundColor: theme.fn.variant({
+        variant: "light",
+        color: theme.primaryColor,
+      }).background,
+      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+        .color,
+    },
   },
 
   subLink: {
@@ -96,7 +115,10 @@ export function AppHeader() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-  const { classes, theme } = useStyles();
+  const { classes, theme, cx } = useStyles();
+  const pathname = usePathname();
+  const { width } = useViewportSize();
+  console.log(width);
 
   const links = appSubLinks.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
@@ -121,7 +143,6 @@ export function AppHeader() {
       <Header height={60} px="md">
         <Group position="apart" sx={{ height: "100%" }}>
           <AppLogo />
-
           <Group
             sx={{ height: "100%" }}
             spacing={0}
@@ -132,7 +153,9 @@ export function AppHeader() {
                 component={Link}
                 href={link.href}
                 key={index}
-                className={classes.link}
+                className={cx(classes.link, {
+                  [classes.linkActive]: pathname.startsWith(link.href),
+                })}
               >
                 {link.label}
               </UnstyledButton>
@@ -193,14 +216,30 @@ export function AppHeader() {
             </HoverCard>
           </Group>
 
-          <Group className={classes.hiddenMobile}>
-            <Button>Sign up</Button>
+          <Group className={classes.hiddenMobile} spacing={5}>
+            <Button
+              size="xs"
+              variant="outline"
+              component={Link}
+              href="/auth/signin"
+            >
+              Sign in
+            </Button>
+            <Button
+              size="xs"
+              variant="filled"
+              component={Link}
+              href="/auth/signup"
+            >
+              Sign up
+            </Button>
           </Group>
 
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
             className={classes.hiddenDesktop}
+            hidden={width < 768 && width >= 767}
           />
         </Group>
       </Header>
@@ -243,8 +282,22 @@ export function AppHeader() {
         />
 
         <Group position="center" grow pb="xl" px="md">
-          <Button variant="default">Log in</Button>
-          <Button>Sign up</Button>
+          <Button
+            size="xs"
+            variant="outline"
+            component={Link}
+            href="/auth/signin"
+          >
+            Sign in
+          </Button>
+          <Button
+            size="xs"
+            variant="filled"
+            component={Link}
+            href="/auth/signup"
+          >
+            Sign up
+          </Button>
         </Group>
       </Drawer>
     </Box>

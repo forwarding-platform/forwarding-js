@@ -6,12 +6,12 @@ import React from "react";
 export default function Providers({ children }) {
   // Handle color scheme of the application
   const [colorScheme, setColorScheme] = useLocalStorage({
-    key: "app-color-scheme",
+    key: "mantine-color-scheme",
     defaultValue: "light",
     getInitialValueInEffect: true,
   });
   const toggleColorScheme = (scheme) => {
-    const nextColorScheme = scheme || scheme == "dark" ? "light" : "dark";
+    const nextColorScheme = scheme || colorScheme == "dark" ? "light" : "dark";
     setColorScheme(nextColorScheme);
   };
 
@@ -25,7 +25,7 @@ export default function Providers({ children }) {
         withNormalizeCSS
         theme={{
           ...theme,
-          colorScheme,
+          colorScheme: colorScheme,
         }}
       >
         {children}
