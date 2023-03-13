@@ -2,6 +2,8 @@ import {
   IconBrandCodesandbox,
   IconCode,
   IconHelpCircle,
+  IconLogout,
+  IconSettings2,
   IconTicTac,
 } from "@tabler/icons-react";
 

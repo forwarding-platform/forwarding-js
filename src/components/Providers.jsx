@@ -1,9 +1,11 @@
 import { theme } from "@/utils/theme";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
-import React from "react";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import React, { useState } from "react";
 
-export default function Providers({ children }) {
+export default function Providers({ children, pageProps }) {
   // Handle color scheme of the application
   const [colorScheme, setColorScheme] = useLocalStorage({
     key: "mantine-color-scheme",
@@ -15,21 +17,29 @@ export default function Providers({ children }) {
     setColorScheme(nextColorScheme);
   };
 
+  // Handle supabase instance
+  const [supabase] = useState(() => createBrowserSupabaseClient());
+
   return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
+    <SessionContextProvider
+      supabaseClient={supabase}
+      initialSession={pageProps?.initialSession}
     >
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          ...theme,
-          colorScheme: colorScheme,
-        }}
+      <ColorSchemeProvider
+        colorScheme={colorScheme}
+        toggleColorScheme={toggleColorScheme}
       >
-        {children}
-      </MantineProvider>
-    </ColorSchemeProvider>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            ...theme,
+            colorScheme: colorScheme,
+          }}
+        >
+          {children}
+        </MantineProvider>
+      </ColorSchemeProvider>
+    </SessionContextProvider>
   );
 }

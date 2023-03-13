@@ -1,6 +1,8 @@
 import { appSubLinks, headerLinks } from "@/constants/headerLinks";
 import {
+  ActionIcon,
   Anchor,
+  Avatar,
   Box,
   Burger,
   Button,
@@ -12,17 +14,32 @@ import {
   Group,
   Header,
   HoverCard,
+  Menu,
+  NavLink,
+  Paper,
   rem,
   SimpleGrid,
   Text,
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
-import { useDisclosure, useViewportSize } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+import {
+  useDisclosure,
+  useViewportSize,
+  useWindowScroll,
+} from "@mantine/hooks";
+import {
+  IconChevronDown,
+  IconLogout,
+  IconSettings2,
+  IconUser,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import AppLogo from "./_logo";
 import { usePathname } from "next/navigation";
+import { useProfile } from "@/utils/hooks/profile";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import Image from "next/image";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -118,7 +135,10 @@ export function AppHeader() {
   const { classes, theme, cx } = useStyles();
   const pathname = usePathname();
   const { width } = useViewportSize();
-  console.log(width);
+  const [{ y }] = useWindowScroll();
+  const supabase = useSupabaseClient();
+  const user = useUser();
+  const { profile } = useProfile("id", user?.id);
 
   const links = appSubLinks.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
@@ -139,8 +159,8 @@ export function AppHeader() {
   ));
 
   return (
-    <Box>
-      <Header height={60} px="md">
+    <Paper pos="sticky" top={0} shadow={y > 60 ? "md" : 0}>
+      <Header height={60} px="xs" withBorder={y > 60}>
         <Group position="apart" sx={{ height: "100%" }}>
           <AppLogo />
           <Group
@@ -216,31 +236,78 @@ export function AppHeader() {
             </HoverCard>
           </Group>
 
-          <Group className={classes.hiddenMobile} spacing={5}>
-            <Button
-              size="xs"
-              variant="outline"
-              component={Link}
-              href="/auth/signin"
-            >
-              Sign in
-            </Button>
-            <Button
-              size="xs"
-              variant="filled"
-              component={Link}
-              href="/auth/signup"
-            >
-              Sign up
-            </Button>
-          </Group>
+          <Group>
+            {profile ? (
+              <Menu
+                width={300}
+                shadow="xl"
+                transitionProps={{ transition: "pop" }}
+              >
+                <Menu.Target>
+                  <Avatar
+                    src={profile.avatar_url}
+                    alt={"My avatar"}
+                    radius="xl"
+                    component={UnstyledButton}
+                    color={theme.primaryColor}
+                    title="Account management"
+                  />
+                </Menu.Target>
+                <Menu.Dropdown className="rounded-lg shadow-md">
+                  {/* </Menu.Item> */}
+                  <Menu.Item
+                    py="sm"
+                    icon={<IconUser size={14} />}
+                    component={Link}
+                    href={`/user/${profile.username}`}
+                  >
+                    Profile
+                  </Menu.Item>
+                  <Menu.Item py="sm" icon={<IconSettings2 size={14} />}>
+                    Settings
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
+                    color="red"
+                    py="sm"
+                    icon={<IconLogout size={14} />}
+                    onClick={async () => {
+                      const { error } = await supabase.auth.signOut();
+                      // mutate();
+                    }}
+                  >
+                    Sign out
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            ) : (
+              <Group className={classes.hiddenMobile} spacing={5}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  component={Link}
+                  href="/auth/signin"
+                >
+                  Sign in
+                </Button>
+                <Button
+                  size="xs"
+                  variant="filled"
+                  component={Link}
+                  href="/auth/signup"
+                >
+                  Sign up
+                </Button>
+              </Group>
+            )}
 
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            className={classes.hiddenDesktop}
-            hidden={width < 768 && width >= 767}
-          />
+            <Burger
+              opened={drawerOpened}
+              onClick={toggleDrawer}
+              className={classes.hiddenDesktop}
+              hidden={width < 768 && width >= 767}
+            />
+          </Group>
         </Group>
       </Header>
 
@@ -281,25 +348,27 @@ export function AppHeader() {
           color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
         />
 
-        <Group position="center" grow pb="xl" px="md">
-          <Button
-            size="xs"
-            variant="outline"
-            component={Link}
-            href="/auth/signin"
-          >
-            Sign in
-          </Button>
-          <Button
-            size="xs"
-            variant="filled"
-            component={Link}
-            href="/auth/signup"
-          >
-            Sign up
-          </Button>
-        </Group>
+        {!profile && (
+          <Group position="center" grow pb="xl" px="md">
+            <Button
+              size="xs"
+              variant="outline"
+              component={Link}
+              href="/auth/signin"
+            >
+              Sign in
+            </Button>
+            <Button
+              size="xs"
+              variant="filled"
+              component={Link}
+              href="/auth/signup"
+            >
+              Sign up
+            </Button>
+          </Group>
+        )}
       </Drawer>
-    </Box>
+    </Paper>
   );
 }
