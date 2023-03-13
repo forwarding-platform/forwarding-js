@@ -159,7 +159,12 @@ export function AppHeader() {
   ));
 
   return (
-    <Paper pos="sticky" top={0} shadow={y > 60 ? "md" : 0}>
+    <Paper
+      className=" z-[10000]"
+      pos="sticky"
+      top={0}
+      shadow={y > 60 ? "md" : 0}
+    >
       <Header height={60} px="xs" withBorder={y > 60}>
         <Group position="apart" sx={{ height: "100%" }}>
           <AppLogo />
@@ -174,7 +179,7 @@ export function AppHeader() {
                 href={link.href}
                 key={index}
                 className={cx(classes.link, {
-                  [classes.linkActive]: pathname.startsWith(link.href),
+                  [classes.linkActive]: pathname?.startsWith(link.href),
                 })}
               >
                 {link.label}
