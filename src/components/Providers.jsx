@@ -1,6 +1,7 @@
 import { theme } from "@/utils/theme";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
+import { ModalsProvider } from "@mantine/modals";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import React, { useState } from "react";
@@ -37,7 +38,7 @@ export default function Providers({ children, pageProps }) {
             colorScheme: colorScheme,
           }}
         >
-          {children}
+          <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </SessionContextProvider>

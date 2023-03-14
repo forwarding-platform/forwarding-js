@@ -1,40 +1,8 @@
 import Layout from "@/components/_layout";
 import ProfileLayout from "@/components/_layout.profile";
 import { supabase } from "@/libs/supabase";
-import { useProfile } from "@/utils/hooks/profile";
-import {
-  ActionIcon,
-  Anchor,
-  Box,
-  Button,
-  Center,
-  Container,
-  Divider,
-  Group,
-  Loader,
-  Paper,
-  Stack,
-  Text,
-  Title,
-  useMantineTheme,
-} from "@mantine/core";
-import { useUser } from "@supabase/auth-helpers-react";
-import {
-  IconBriefcase,
-  IconCake,
-  IconCameraPlus,
-  IconLink,
-  IconMapPin,
-  IconPencil,
-  IconPlus,
-  IconSchool,
-} from "@tabler/icons-react";
-import dayjs from "dayjs";
-import Image from "next/image";
-import Link from "next/link";
+import { Center, Loader, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import ProfileTabPage from "./[tab]";
 
 export default function ProfilePage({ username, posts }) {
   const router = useRouter();

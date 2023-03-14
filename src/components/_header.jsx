@@ -159,12 +159,7 @@ export function AppHeader() {
   ));
 
   return (
-    <Paper
-      className=" z-[10000]"
-      pos="sticky"
-      top={0}
-      shadow={y > 60 ? "md" : 0}
-    >
+    <Paper shadow={y > 60 ? "md" : 0}>
       <Header height={60} px="xs" withBorder={y > 60}>
         <Group position="apart" sx={{ height: "100%" }}>
           <AppLogo />

@@ -12,6 +12,15 @@ export const theme = {
   primaryColor: "violet",
   primaryShade: 8,
   fontFamily: font.style.fontFamily,
+  components: {
+    Modal: {
+      styles: () => ({
+        header: {
+          zIndex: 1,
+        },
+      }),
+    },
+  },
   colors: {
     dark: [
       "#C2C3CA",

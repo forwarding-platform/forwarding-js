@@ -2,6 +2,12 @@ import Providers from "@/components/Providers";
 import { RouterTransition } from "@/components/RouterTransition";
 import "@/styles/globals.css";
 import Head from "next/head";
+import { Poppins } from "next/font/google";
+
+const font = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export default function App({ Component, pageProps }) {
   return (
@@ -14,7 +20,9 @@ export default function App({ Component, pageProps }) {
       </Head>
       <Providers pageProps={pageProps}>
         <RouterTransition />
-        <Component {...pageProps} />
+        <div className={font.className}>
+          <Component {...pageProps} />
+        </div>
       </Providers>
     </>
   );

@@ -11,11 +11,13 @@ import {
   Group,
   Loader,
   Paper,
+  ScrollArea,
   Stack,
   Text,
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { modals, openModal } from "@mantine/modals";
 import { useUser } from "@supabase/auth-helpers-react";
 import {
   IconBriefcase,
@@ -30,29 +32,30 @@ import {
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
+import EditProfileForm from "./EditProfileForm";
 
 export default function ProfileLayout({ username, children }) {
   const { profile } = useProfile("username", username);
   const user = useUser();
   const tabLinks = [
     {
-      href: ``,
+      href: `/${username}/`,
       label: "Posts",
     },
     {
-      href: `/questions`,
+      href: `/${username}/questions`,
       label: "Questions",
     },
     {
-      href: `/answers`,
+      href: `/${username}/answers`,
       label: "Answers",
     },
     {
-      href: `/exercises`,
+      href: `/${username}/exercises`,
       label: "Exercises",
     },
     {
-      href: `/practices`,
+      href: `/${username}/practices`,
       label: "Practices",
     },
   ];
@@ -68,17 +71,7 @@ export default function ProfileLayout({ username, children }) {
   if (profile)
     return (
       <Layout>
-        <Container
-          fluid
-          mx="sm"
-          className="shadow-lg"
-          style={{
-            background:
-              theme.colorScheme == "dark"
-                ? theme.colors.dark[7]
-                : theme.colors.gray[0],
-          }}
-        >
+        <Container fluid mx="sm" className="shadow-lg">
           <div className="relative mx-auto h-[25vw] max-h-[45vh] rounded-bl-lg rounded-br-lg bg-blue-400 lg:w-4/5">
             <Image
               src="/utils/gray.png"
@@ -146,14 +139,14 @@ export default function ProfileLayout({ username, children }) {
                   <Button
                     variant="outline"
                     leftIcon={<IconPencil strokeWidth={1.5} />}
-                    // onClick={() =>
-                    //   openModal({
-                    //     title: <Title order={5}>Edit profile</Title>,
-                    //     children: <EditProfile profile={profile} />,
-                    //     modalId: "edit-profile",
-                    //     size: "xl",
-                    //   })
-                    // }
+                    onClick={() =>
+                      openModal({
+                        title: <Text className="font-bold">Edit profile</Text>,
+                        children: <EditProfileForm profile={profile} />,
+                        modalId: "editProfile",
+                        yOffset: "7vh",
+                      })
+                    }
                   >
                     Edit profile info
                   </Button>
