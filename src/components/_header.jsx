@@ -41,13 +41,13 @@ import { useProfile } from "@/utils/hooks/profile";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Image from "next/image";
 
-const useStyles = createStyles((theme) => ({
+export const useStyles = createStyles((theme) => ({
   link: {
     display: "flex",
     alignItems: "center",
     height: "50%",
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
+    paddingLeft: theme.spacing.sm,
+    paddingRight: theme.spacing.sm,
     borderRadius: theme.radius.md,
     marginLeft: "1px",
     marginRight: "1px",
@@ -159,8 +159,18 @@ export function AppHeader() {
   ));
 
   return (
-    <Paper shadow={y > 60 ? "md" : 0}>
-      <Header height={60} px="xs" withBorder={y > 60}>
+    <Paper>
+      <Header
+        className={`${y > 60 ? "shadow-md" : "shadow-none"}`}
+        height={60}
+        px="xs"
+        withBorder={y < 60}
+        bg={
+          theme.colorScheme == "dark"
+            ? theme.colors.dark[8]
+            : theme.colors.gray[0]
+        }
+      >
         <Group position="apart" sx={{ height: "100%" }}>
           <AppLogo />
           <Group
@@ -251,6 +261,7 @@ export function AppHeader() {
                     component={UnstyledButton}
                     color={theme.primaryColor}
                     title="Account management"
+                    // imageProps={{ refererPolicy: "no-referer" }}
                   />
                 </Menu.Target>
                 <Menu.Dropdown className="rounded-lg shadow-md">

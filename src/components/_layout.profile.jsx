@@ -10,8 +10,9 @@ import {
   Divider,
   Group,
   Loader,
+  Menu,
   Paper,
-  ScrollArea,
+  Select,
   Stack,
   Text,
   Title,
@@ -31,35 +32,38 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Image from "next/image";
-import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import EditProfileForm from "./EditProfileForm";
 
 export default function ProfileLayout({ username, children }) {
   const { profile } = useProfile("username", username);
   const user = useUser();
+  const pathname = usePathname();
+  const router = useRouter();
+  const theme = useMantineTheme();
   const tabLinks = [
     {
-      href: `/${username}/`,
+      href: `/user/${username}`,
       label: "Posts",
     },
     {
-      href: `/${username}/questions`,
+      href: `/user/${username}/questions`,
       label: "Questions",
     },
     {
-      href: `/${username}/answers`,
+      href: `/user/${username}/answers`,
       label: "Answers",
     },
     {
-      href: `/${username}/exercises`,
-      label: "Exercises",
+      href: `/user/${username}/quizzes`,
+      label: "Quiz Records",
     },
     {
-      href: `/${username}/practices`,
-      label: "Practices",
+      href: `/user/${username}/practices`,
+      label: "Practice Records",
     },
   ];
-  const theme = useMantineTheme();
   if (!profile)
     return (
       <Layout>
@@ -71,7 +75,8 @@ export default function ProfileLayout({ username, children }) {
   if (profile)
     return (
       <Layout>
-        <Container fluid mx="sm" className="shadow-lg">
+        {/* Cover photo section */}
+        <Paper component={Container} fluid shadow="md">
           <div className="relative mx-auto h-[25vw] max-h-[45vh] rounded-bl-lg rounded-br-lg bg-blue-400 lg:w-4/5">
             <Image
               src="/utils/gray.png"
@@ -89,14 +94,14 @@ export default function ProfileLayout({ username, children }) {
               </Button>
             )}
           </div>
-          <div className="flex flex-col items-center justify-center px-5 md:flex-row md:justify-start lg:mx-auto lg:w-4/5 lg:px-10">
+          <div className="flex flex-col items-center justify-center px-5 pb-5 md:flex-row md:justify-start lg:mx-auto lg:w-4/5 lg:px-10">
             <div className="w-44">
               <Box
                 className="relative -mt-[5vh] h-44 w-44 rounded-full"
                 style={{
                   background:
                     theme.colorScheme === "dark"
-                      ? theme.colors.dark[7]
+                      ? theme.colors.dark[8]
                       : theme.colors.gray[0],
                 }}
               >
@@ -133,14 +138,32 @@ export default function ProfileLayout({ username, children }) {
               </Text>
               {user && user?.id == profile.id && (
                 <div className="mt-1 flex justify-center gap-3 md:justify-end">
-                  <Button leftIcon={<IconPlus strokeWidth={1.5} />}>
-                    Create new post
-                  </Button>
+                  <Menu>
+                    <Menu.Target>
+                      <Button leftIcon={<IconPlus strokeWidth={1.5} />}>
+                        New article
+                      </Button>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        onClick={() => {
+                          modals.open({
+                            title: <Text className="font-bold">New Post</Text>,
+                            modalId: "newPost",
+                            size: "xl",
+                          });
+                        }}
+                      >
+                        New post
+                      </Menu.Item>
+                      <Menu.Item>New question</Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
                   <Button
                     variant="outline"
                     leftIcon={<IconPencil strokeWidth={1.5} />}
                     onClick={() =>
-                      openModal({
+                      modals.open({
                         title: <Text className="font-bold">Edit profile</Text>,
                         children: <EditProfileForm profile={profile} />,
                         modalId: "editProfile",
@@ -154,24 +177,10 @@ export default function ProfileLayout({ username, children }) {
               )}
             </div>
           </div>
-          <Divider className=" mt-5 px-5 lg:mx-auto lg:w-4/5 lg:px-10" />
-          <div className=" hide-scrollbar flex flex-row items-end justify-start overflow-x-scroll lg:mx-auto lg:w-4/5">
-            {tabLinks.map((link, index) => (
-              <Anchor
-                variant="text"
-                component={Link}
-                href={link.href}
-                key={index}
-                underline={false}
-                className={` py-3 transition-all lg:py-5 lg:px-5`}
-              >
-                {link.label}
-              </Anchor>
-            ))}
-          </div>
-        </Container>
+        </Paper>
         <Container size="lg" my="lg">
           <div className="flex w-full flex-col gap-3 lg:flex-row lg:gap-5">
+            {/* Side sections */}
             <section className="flex basis-2/5 flex-col gap-3 lg:gap-5">
               <Paper className="flex flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Intro</Title>
@@ -219,6 +228,15 @@ export default function ProfileLayout({ username, children }) {
                       </Text>
                     </Group>
                   ))}
+                {profile.country && (
+                  <Group>
+                    <IconMapPin strokeWidth={1.5} size="24" color="gray" />
+                    <Text size="sm">
+                      <Text color="dimmed">From</Text>
+                      {profile.country}
+                    </Text>
+                  </Group>
+                )}
                 {profile.link &&
                   profile.link.map((item, i) => (
                     <Group key={i}>
@@ -231,15 +249,6 @@ export default function ProfileLayout({ username, children }) {
                       </Text>
                     </Group>
                   ))}
-                {profile.country && (
-                  <Group>
-                    <IconMapPin strokeWidth={1.5} size="24" color="gray" />
-                    <Text size="sm">
-                      <Text color="dimmed">From</Text>
-                      {profile.country}
-                    </Text>
-                  </Group>
-                )}
               </Paper>
               <Paper className="flex h-96 flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Achievements</Title>
@@ -248,8 +257,26 @@ export default function ProfileLayout({ username, children }) {
                 <Title order={3}>Interest tags</Title>
               </Paper>
             </section>
+            {/* Main section */}
             <section className="basis-3/5">
-              <Paper className="rounded-lg shadow" px="md" py="sm">
+              <div className="mb-3 flex items-center justify-end gap-2">
+                <Select
+                  variant="unstyled"
+                  inputContainer={(children) => (
+                    <Paper pl="sm" shadow="lg">
+                      {children}
+                    </Paper>
+                  )}
+                  aria-label="Filter"
+                  data={tabLinks.map((link) => ({
+                    label: link.label,
+                    value: link.href,
+                  }))}
+                  value={pathname}
+                  onChange={(value) => router.push(value)}
+                />
+              </div>
+              <Paper shadow="lg" px="md" py="sm">
                 {children}
               </Paper>
             </section>

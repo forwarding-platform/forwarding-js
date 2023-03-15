@@ -11,7 +11,7 @@ export default function ToggleScheme() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
-    <Group position="center" my="xl">
+    <Group position="center">
       <SegmentedControl
         value={colorScheme}
         onChange={(value) => toggleColorScheme()}

@@ -27,7 +27,7 @@ export default function AppFooter() {
     );
   });
   return (
-    <Container className="flex flex-col items-center justify-center md:flex-row md:justify-between">
+    <Container className="flex flex-col items-center justify-center py-2 md:flex-row md:justify-between">
       <div className="hidden md:block">
         <div className="flex w-full items-center justify-center md:justify-start">
           <AppLogo />
