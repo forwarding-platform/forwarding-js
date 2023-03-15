@@ -35,6 +35,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import EditProfileForm from "./EditProfileForm";
+import MarkdownEditor from "./MarkdownEditor";
 
 export default function ProfileLayout({ username, children }) {
   const { profile } = useProfile("username", username);
@@ -149,8 +150,9 @@ export default function ProfileLayout({ username, children }) {
                         onClick={() => {
                           modals.open({
                             title: <Text className="font-bold">New Post</Text>,
+                            children: <MarkdownEditor />,
                             modalId: "newPost",
-                            size: "xl",
+                            fullScreen: true,
                           });
                         }}
                       >
