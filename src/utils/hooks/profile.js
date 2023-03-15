@@ -9,7 +9,7 @@ import useSWR from "swr";
 export const useProfile = (key, value) => {
   const supabase = useSupabaseClient();
   const { data: profile, ...rest } = useSWR(
-    () => value && [`profile-by-${key}`, value],
+    value ? [`profile-by-${key}`, value] : null,
     async () => {
       const { data, error } = await supabase
         .from("profile")

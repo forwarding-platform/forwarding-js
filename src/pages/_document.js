@@ -40,7 +40,7 @@ export default class _Document extends Document {
             content="/favicon/browserconfig.xml"
           />
           <meta name="theme-color" content="#ffffff" />
-          <meta name="referrer" content="no-referrer" />
+          {/* <meta name="referrer" content="no-referrer" /> */}
           {/* <style
             dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
             id="sandpack"

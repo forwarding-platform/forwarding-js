@@ -15,10 +15,6 @@ export default function Index() {
         User: {user?.email} <br />
         Name: {profile?.name}
       </Container>
-
-      <div className="fixed bottom-0 right-0 m-3">
-        <ToggleScheme />
-      </div>
     </Layout>
   );
 }

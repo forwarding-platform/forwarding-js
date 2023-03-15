@@ -32,6 +32,7 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import EditProfileForm from "./EditProfileForm";
@@ -146,16 +147,7 @@ export default function ProfileLayout({ username, children }) {
                       </Button>
                     </Menu.Target>
                     <Menu.Dropdown>
-                      <Menu.Item
-                        onClick={() => {
-                          modals.open({
-                            title: <Text className="font-bold">New Post</Text>,
-                            children: <MarkdownEditor />,
-                            modalId: "newPost",
-                            fullScreen: true,
-                          });
-                        }}
-                      >
+                      <Menu.Item component={Link} href="/editor">
                         New post
                       </Menu.Item>
                       <Menu.Item>New question</Menu.Item>

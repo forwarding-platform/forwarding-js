@@ -161,10 +161,10 @@ export function AppHeader() {
   return (
     <Paper>
       <Header
-        className={`${y > 60 ? "shadow-md" : "shadow-none"}`}
+        className={`${y > 30 ? "shadow-md" : "shadow-none"}`}
         height={60}
         px="xs"
-        withBorder={y < 60}
+        withBorder={y < 30}
         bg={
           theme.colorScheme == "dark"
             ? theme.colors.dark[8]
