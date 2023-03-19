@@ -14,10 +14,12 @@
     "@mantine/carousel": "^6.0.1",
     "@mantine/core": "^6.0.1",
     "@mantine/dates": "^6.0.1",
+    "@mantine/dropzone": "^6.0.2",
     "@mantine/form": "^6.0.1",
     "@mantine/hooks": "^6.0.1",
     "@mantine/modals": "^6.0.1",
     "@mantine/next": "^6.0.1",
+    "@mantine/notifications": "^6.0.2",
     "@mantine/nprogress": "^6.0.1",
     "@supabase/auth-helpers-nextjs": "^0.5.6",
     "@supabase/auth-helpers-react": "^0.3.1",
@@ -31,7 +33,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.5",
-    "swr": "^2.1.0"
+    "swr": "^2.1.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

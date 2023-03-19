@@ -1,3 +1,4 @@
+import UploadImage from "@/components/UploadImage";
 import Layout from "@/components/_layout";
 import { supabase } from "@/libs/supabase";
 import {
@@ -10,7 +11,6 @@ import {
   Group,
   MultiSelect,
   rem,
-  Select,
   Text,
   Textarea,
   TextInput,
@@ -21,24 +21,26 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useWindowScroll } from "@mantine/hooks";
-import { modals } from "@mantine/modals";
+import { closeAllModals, closeModal, modals } from "@mantine/modals";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconArrowNarrowLeft,
   IconChevronUp,
-  IconEyeCheck,
-  IconHelp,
   IconHelpSmall,
-  IconQuestionMark,
+  IconPhotoPlus,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import mdStyle from "@/styles/markdown.module.css";
+import { useEffect, useState } from "react";
 
 export default function EditorPage({ tags }) {
-  const [md, setMd] = useState();
   const [{ y }, scrollTo] = useWindowScroll();
   const theme = useMantineTheme();
   const router = useRouter();
+  const supabase = useSupabaseClient();
+  const user = useUser();
+  const [images, setImages] = useState([]);
   const form = useForm({
     initialValues: {
       postTag: [],
@@ -51,8 +53,43 @@ export default function EditorPage({ tags }) {
     },
     validateInputOnBlur: true,
   });
+
+  /**
+   *
+   * @param {File} file
+   */
+  const handleLocalImage = async (file) => {
+    // if (user) {
+    //   const { data, error } = await supabase.storage
+    //     .from("post-img")
+    //     .upload(`${user.id}/${Date.now()}`, file, {
+    //       cacheControl: "36000",
+    //     });
+    //   if (error) {
+    //     closeModal("upload-post-image");
+    //     return window.alert("Error occurs when upload image!");
+    //   }
+    //   // https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/post-img/3b045270-33e0-4431-b827-ec310df3dc5c/1679222223223
+    //   if (data) {
+    //     form.setFieldValue(
+    //       "content",
+    //       form.values.content +
+    //         `![Image alt text](https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/post-img/${data.path}) "Image title"`
+    //     );
+    //     closeModal("upload-post-image");
+    //     return;
+    //   }
+    // }
+    const imgUrl = URL.createObjectURL(file);
+    form.setFieldValue(
+      "content",
+      form.values.content + `![Alt text](${imgUrl}) "Image title"\n`
+    );
+    setImages((current) => [...current, imgUrl]);
+    closeAllModals();
+  };
   const handleFormSubmit = form.onSubmit((values) => {
-    console.log(values);
+    console.log("images", images);
   });
   return (
     <Layout>
@@ -107,8 +144,8 @@ export default function EditorPage({ tags }) {
             {...form.getInputProps("title")}
             onBlur={(e) => form.setFieldValue("title", e.target.value.trim())}
           />
-          <div className="mt-2 self-end">
-            <Group>
+          <div className="mt-2 mb-0 self-end">
+            <Group spacing={"xs"}>
               <ActionIcon
                 component={Tooltip}
                 label="Markdown Cheat Sheet"
@@ -117,34 +154,58 @@ export default function EditorPage({ tags }) {
               >
                 <IconHelpSmall strokeWidth={1.5} />
               </ActionIcon>
-              <Tooltip label="Preview">
+              <Tooltip label="Upload image">
                 <ActionIcon
-                  disabled={!md?.length}
                   variant="outline"
                   color={theme.primaryColor}
                   onClick={() =>
                     modals.open({
-                      title: "Preview",
-                      children: <ReactMarkdown>{md}</ReactMarkdown>,
-                      size: "xl",
+                      title: "Upload image",
+                      children: (
+                        <UploadImage handleLocalImage={handleLocalImage} />
+                      ),
+                      modalId: "upload-post-image",
                     })
                   }
                 >
-                  <IconEyeCheck strokeWidth={1.5} />
+                  <IconPhotoPlus strokeWidth={1.5} />
                 </ActionIcon>
               </Tooltip>
             </Group>
           </div>
-          <Textarea
-            autosize
-            minRows={10}
-            placeholder="Your markdown content here"
-            onChange={(e) => setMd(e.target.value)}
-            value={md}
-          />
-          <div className="self-end">
+          <div className="relative">
+            <Textarea
+              autosize
+              minRows={10}
+              placeholder="Your markdown content here"
+              {...form.getInputProps("content")}
+            />
+          </div>
+          <Text color="dimmed" size="sm">
+            <b>Important:</b> Please do not modify image urls that are uploaded
+            from your device, it may corrupt your post content.
+          </Text>
+          <div className="mt-2 self-end">
             <Group>
               <Button variant="outline">Cancel</Button>
+              <Button
+                disabled={form.values.content.length == 0}
+                variant="outline"
+                color={theme.primaryColor}
+                onClick={() =>
+                  modals.open({
+                    title: "Preview",
+                    children: (
+                      <ReactMarkdown className={mdStyle.markdownStyle}>
+                        {form.values.content}
+                      </ReactMarkdown>
+                    ),
+                    size: "xl",
+                  })
+                }
+              >
+                Preview
+              </Button>
               <Button type="submit">Post</Button>
             </Group>
           </div>
