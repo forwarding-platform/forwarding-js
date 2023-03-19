@@ -138,7 +138,10 @@ export function AppHeader() {
   const [{ y }] = useWindowScroll();
   const supabase = useSupabaseClient();
   const user = useUser();
-  const { profile } = useProfile("id", user?.id);
+  const { profile, error, isLoading, isValidating } = useProfile(
+    "id",
+    user?.id
+  );
 
   const links = appSubLinks.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>
@@ -247,7 +250,7 @@ export function AppHeader() {
           </Group>
 
           <Group>
-            {profile ? (
+            {profile && user ? (
               <Menu
                 width={300}
                 shadow="xl"
@@ -359,26 +362,27 @@ export function AppHeader() {
           color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
         />
 
-        {!profile && (
-          <Group position="center" grow pb="xl" px="md">
-            <Button
-              size="xs"
-              variant="outline"
-              component={Link}
-              href="/auth/signin"
-            >
-              Sign in
-            </Button>
-            <Button
-              size="xs"
-              variant="filled"
-              component={Link}
-              href="/auth/signup"
-            >
-              Sign up
-            </Button>
-          </Group>
-        )}
+        {!profile ||
+          (!user && (
+            <Group position="center" grow pb="xl" px="md">
+              <Button
+                size="xs"
+                variant="outline"
+                component={Link}
+                href="/auth/signin"
+              >
+                Sign in
+              </Button>
+              <Button
+                size="xs"
+                variant="filled"
+                component={Link}
+                href="/auth/signup"
+              >
+                Sign up
+              </Button>
+            </Group>
+          ))}
       </Drawer>
     </Paper>
   );

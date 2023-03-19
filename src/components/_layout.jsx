@@ -1,11 +1,19 @@
 import { AppShell, Box, useMantineTheme } from "@mantine/core";
-import React from "react";
+import { useSession } from "@supabase/auth-helpers-react";
+import { useEffect } from "react";
 import ToggleScheme from "./ToggleScheme";
 import AppFooter from "./_footer";
 import { AppHeader } from "./_header";
 
 export default function Layout({ children }) {
   const theme = useMantineTheme();
+  const session = useSession();
+  useEffect(() => {
+    if (session) {
+      console.log("exp", session.expires_at);
+      console.log("expIn", session.expires_in);
+    }
+  }, [session]);
   return (
     <>
       <AppShell
