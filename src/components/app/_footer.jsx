@@ -1,8 +1,9 @@
 import { footerLinks } from "@/constants/footerLinks";
-import { Anchor, Container, Text } from "@mantine/core";
+import { Anchor, Container, Stack, Text } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import ToggleScheme from "./ToggleScheme";
 import AppLogo from "./_logo";
 
 export default function AppFooter() {

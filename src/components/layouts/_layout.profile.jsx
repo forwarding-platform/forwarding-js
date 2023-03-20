@@ -1,4 +1,4 @@
-import Layout from "@/components/_layout";
+import Layout from "@/components/layouts/_layout";
 import { useProfile } from "@/utils/hooks/profile";
 import {
   ActionIcon,
@@ -18,8 +18,8 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { modals, openModal } from "@mantine/modals";
-import { useUser } from "@supabase/auth-helpers-react";
+import { closeAllModals, modals } from "@mantine/modals";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconBriefcase,
   IconCake,
@@ -35,14 +35,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
-import EditProfileForm from "./EditProfileForm";
-import MarkdownEditor from "./MarkdownEditor";
+import EditProfileForm from "../EditProfileForm";
+import UploadImage from "../UploadImage";
+import { mutate as externalMutate } from "swr";
 
 export default function ProfileLayout({ username, children }) {
-  const { profile } = useProfile("username", username);
+  const { profile, mutate } = useProfile("username", username);
   const user = useUser();
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const theme = useMantineTheme();
   const tabLinks = [
     {
@@ -66,6 +68,70 @@ export default function ProfileLayout({ username, children }) {
       label: "Practice Records",
     },
   ];
+  const handleChangeCoverPhoto = async (file) => {
+    if (user) {
+      await supabase.storage.from("covers").remove([profile.cover_url]);
+      const { data, error } = await supabase.storage
+        .from("covers")
+        .upload(`${user.id}-${Date.now()}`, file);
+      if (error) {
+        window.alert("An error occurs during upload cover photo");
+        return;
+      }
+      if (data) {
+        const { data: cv, error: cvError } = await supabase
+          .from("profile")
+          .update({ cover_url: data.path })
+          .eq("id", user.id)
+          .select("cover_url")
+          .single();
+        if (cv)
+          mutate({
+            ...profile,
+            cover_url: cv.cover_url,
+          });
+        if (cvError) {
+          window.alert("An error occurs during upload cover photo");
+          return;
+        }
+      }
+    }
+    closeAllModals();
+  };
+  const handleChangeAvatar = async (file) => {
+    if (user) {
+      await supabase.storage.from("avatars").remove([profile.avatar_url]);
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(`${user.id}-${Date.now()}`, file);
+      if (error) {
+        window.alert("An error occurs during upload avatar");
+        return;
+      }
+      if (data) {
+        const { data: cv, error: cvError } = await supabase
+          .from("profile")
+          .update({ avatar_url: data.path })
+          .eq("id", user.id)
+          .select("avatar_url")
+          .single();
+        if (cv)
+          mutate({
+            ...profile,
+            avatar_url: cv.avatar_url,
+          });
+        externalMutate(["profile-by-id", user.id], {
+          ...profile,
+          avatar_url: cv.avatar_url,
+        });
+        if (cvError) {
+          window.alert("An error occurs during upload avatar");
+          return;
+        }
+      }
+    }
+    closeAllModals();
+  };
   if (!profile)
     return (
       <Layout>
@@ -79,17 +145,29 @@ export default function ProfileLayout({ username, children }) {
       <Layout>
         {/* Cover photo section */}
         <Paper component={Container} fluid shadow="md">
-          <div className="relative mx-auto h-[25vw] max-h-[45vh] rounded-bl-lg rounded-br-lg bg-blue-400 lg:w-4/5">
+          <div className="relative mx-auto h-[25vw] max-h-[45vh] rounded-bl-lg rounded-br-lg lg:w-4/5">
             <Image
-              src="/utils/gray.png"
+              src={
+                profile.cover_url
+                  ? `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/covers/${profile.cover_url}`
+                  : "/utils/gray.png"
+              }
               fill
               alt="cover"
-              className="rounded-bl-lg rounded-br-lg"
+              className="rounded-bl-lg rounded-br-lg object-cover object-center"
             />
             {user && user?.id == profile.id && (
               <Button
                 className="absolute bottom-0 right-0 mx-3 my-5 shadow"
                 variant="white"
+                onClick={() => {
+                  modals.open({
+                    title: "Edit cover photo",
+                    children: (
+                      <UploadImage handleLocalImage={handleChangeCoverPhoto} />
+                    ),
+                  });
+                }}
               >
                 <IconCameraPlus />
                 <span className="ml-1 hidden sm:block">Edit cover photo</span>
@@ -108,10 +186,14 @@ export default function ProfileLayout({ username, children }) {
                 }}
               >
                 <Image
-                  src={profile.avatar_url}
+                  src={
+                    profile.avatar_url.includes("googleusercontent")
+                      ? profile.avatar_url
+                      : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                  }
                   fill
                   alt="Avatar"
-                  className="absolute cursor-pointer rounded-full p-[5px]"
+                  className="absolute cursor-pointer rounded-full object-cover object-center p-[5px]"
                   onClick={() => {
                     window.open(profile.avatar_url, "_blank");
                   }}
@@ -121,6 +203,14 @@ export default function ProfileLayout({ username, children }) {
                     className="absolute bottom-3 right-3 rounded-full shadow"
                     variant="default"
                     size="lg"
+                    onClick={() => {
+                      modals.open({
+                        title: "Edit avatar",
+                        children: (
+                          <UploadImage handleLocalImage={handleChangeAvatar} />
+                        ),
+                      });
+                    }}
                   >
                     <IconCameraPlus size={24} strokeWidth={1} />
                   </ActionIcon>

@@ -16,12 +16,12 @@ export const headerLinks = [
     label: "Explore",
   },
   {
-    href: "/blog",
-    label: "Blog",
+    href: "/post",
+    label: "Post",
   },
   {
-    href: "/discuss",
-    label: "Discuss",
+    href: "/qna",
+    label: "Q & A",
   },
   {
     href: "/practice",

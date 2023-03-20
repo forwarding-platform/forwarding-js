@@ -1,5 +1,5 @@
-import Providers from "@/components/Providers";
-import { RouterTransition } from "@/components/RouterTransition";
+import Providers from "@/components/app/Providers";
+import { RouterTransition } from "@/components/app/RouterTransition";
 import "@/styles/globals.css";
 import Head from "next/head";
 import { Poppins } from "next/font/google";

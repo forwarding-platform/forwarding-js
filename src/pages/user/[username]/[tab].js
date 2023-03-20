@@ -1,4 +1,4 @@
-import ProfileLayout from "@/components/_layout.profile";
+import ProfileLayout from "@/components/layouts/_layout.profile";
 import { supabase } from "@/libs/supabase";
 import React from "react";
 

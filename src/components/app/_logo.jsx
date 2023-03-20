@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Montserrat } from "next/font/google";
-import styles from "../styles/logo.module.css";
+import styles from "@/styles/logo.module.css";
 
 const font = Montserrat({ subsets: ["latin"] });
 

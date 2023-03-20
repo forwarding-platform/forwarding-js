@@ -1,4 +1,4 @@
-import AppLogo from "@/components/_logo";
+import AppLogo from "@/components/app/_logo";
 import { Carousel } from "@mantine/carousel";
 import { Box, Paper, rem, Text, Title, useMantineTheme } from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";

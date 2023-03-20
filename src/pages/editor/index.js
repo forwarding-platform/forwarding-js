@@ -1,7 +1,8 @@
 import MarkdownParser from "@/components/MarkdownParser";
 import UploadImage from "@/components/UploadImage";
-import Layout from "@/components/_layout";
+import Layout from "@/components/layouts/_layout";
 import { supabase } from "@/libs/supabase";
+import { useProfile } from "@/utils/hooks/profile";
 
 import {
   ActionIcon,
@@ -43,6 +44,7 @@ export default function EditorPage({ tags }) {
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState(false);
   const user = useUser();
+  const { profile } = useProfile("id", user?.id);
   const [images, setImages] = useState([]);
   const form = useForm({
     initialValues: {
@@ -75,8 +77,6 @@ export default function EditorPage({ tags }) {
     setImages((image) => image.filter((i) => imageLinks.includes(i.uri)));
   }, [form.values.content]);
 
-  // useEffect(() => console.log(images), [images]);
-
   const handleLocalImage = async (file) => {
     const imgUrl = URL.createObjectURL(file);
     form.setFieldValue(
@@ -99,7 +99,6 @@ export default function EditorPage({ tags }) {
         uploadTasks.push(promise);
       });
       Promise.all(uploadTasks).then((uploadedImages) => {
-        console.log("u", uploadedImages);
         let replaced = values.content;
         uploadedImages.forEach((i, idx) => {
           replaced = replaced.replace(
@@ -132,17 +131,15 @@ export default function EditorPage({ tags }) {
                 .then(
                   () => {
                     setLoading(false);
-                    router.back();
+                    router.push(`/user/${profile.username}`);
                   },
                   (error) => {
-                    console.log(error);
                     setLoading(false);
                     window.alert("An error occurs when tagging...");
                   }
                 );
             },
             (error) => {
-              console.log(error);
               setLoading(false);
               window.alert("An error occurs when posting...");
             }
@@ -277,7 +274,9 @@ export default function EditorPage({ tags }) {
               >
                 Preview
               </Button>
-              <Button type="submit">Post</Button>
+              <Button type="submit" disabled={!form.isValid}>
+                Post
+              </Button>
             </Group>
           </div>
         </form>

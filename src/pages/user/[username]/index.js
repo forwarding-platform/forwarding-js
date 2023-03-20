@@ -1,6 +1,6 @@
 import MarkdownParser from "@/components/MarkdownParser";
-import Layout from "@/components/_layout";
-import ProfileLayout from "@/components/_layout.profile";
+import Layout from "@/components/layouts/_layout";
+import ProfileLayout from "@/components/layouts/_layout.profile";
 import { supabase } from "@/libs/supabase";
 import { Card, Center, Code, Loader, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
