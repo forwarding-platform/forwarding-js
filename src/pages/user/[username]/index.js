@@ -1,7 +1,8 @@
+import MarkdownParser from "@/components/MarkdownParser";
 import Layout from "@/components/_layout";
 import ProfileLayout from "@/components/_layout.profile";
 import { supabase } from "@/libs/supabase";
-import { Center, Loader, Stack } from "@mantine/core";
+import { Card, Center, Code, Loader, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 
 export default function ProfilePage({ username, posts }) {
@@ -16,7 +17,12 @@ export default function ProfilePage({ username, posts }) {
     );
   return (
     <ProfileLayout username={username}>
-      <pre>{JSON.stringify(posts, null, 2)}</pre>
+      {posts.length !== 0 &&
+        posts.map((post, index) => (
+          <Card key={index}>
+            <MarkdownParser>{post.content}</MarkdownParser>
+          </Card>
+        ))}
     </ProfileLayout>
   );
 }

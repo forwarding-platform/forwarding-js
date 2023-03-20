@@ -6,6 +6,7 @@ import {
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import React, { useState } from "react";
@@ -43,7 +44,7 @@ export default function Providers({ children, pageProps }) {
           }}
         >
           <ModalsProvider>
-            <Notification />
+            <Notifications />
             {children}
           </ModalsProvider>
         </MantineProvider>

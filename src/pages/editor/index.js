@@ -1,6 +1,8 @@
+import MarkdownParser from "@/components/MarkdownParser";
 import UploadImage from "@/components/UploadImage";
 import Layout from "@/components/_layout";
 import { supabase } from "@/libs/supabase";
+
 import {
   ActionIcon,
   Affix,
@@ -9,6 +11,7 @@ import {
   Container,
   Divider,
   Group,
+  LoadingOverlay,
   MultiSelect,
   rem,
   Text,
@@ -21,7 +24,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useWindowScroll } from "@mantine/hooks";
-import { closeAllModals, closeModal, modals } from "@mantine/modals";
+import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconArrowNarrowLeft,
@@ -29,9 +32,8 @@ import {
   IconHelpSmall,
   IconPhotoPlus,
 } from "@tabler/icons-react";
+
 import { useRouter } from "next/router";
-import ReactMarkdown from "react-markdown";
-import mdStyle from "@/styles/markdown.module.css";
 import { useEffect, useState } from "react";
 
 export default function EditorPage({ tags }) {
@@ -39,6 +41,7 @@ export default function EditorPage({ tags }) {
   const theme = useMantineTheme();
   const router = useRouter();
   const supabase = useSupabaseClient();
+  const [loading, setLoading] = useState(false);
   const user = useUser();
   const [images, setImages] = useState([]);
   const form = useForm({
@@ -50,46 +53,104 @@ export default function EditorPage({ tags }) {
     validate: {
       postTag: (value) =>
         value.length === 0 ? "Select at least one tag" : null,
+      content: (value) =>
+        value.length === 0
+          ? "This field cannot be empty"
+          : value.length > 10000
+          ? "Maximum character exceeded"
+          : null,
     },
     validateInputOnBlur: true,
   });
 
-  /**
-   *
-   * @param {File} file
-   */
+  useEffect(() => {
+    const imageRegex = /!\[.*?\]\((blob:.*?)\)/g;
+    const imageLinks = [];
+    let match;
+
+    while ((match = imageRegex.exec(form.values.content))) {
+      imageLinks.push(match[1]);
+    }
+
+    setImages((image) => image.filter((i) => imageLinks.includes(i.uri)));
+  }, [form.values.content]);
+
+  // useEffect(() => console.log(images), [images]);
+
   const handleLocalImage = async (file) => {
-    // if (user) {
-    //   const { data, error } = await supabase.storage
-    //     .from("post-img")
-    //     .upload(`${user.id}/${Date.now()}`, file, {
-    //       cacheControl: "36000",
-    //     });
-    //   if (error) {
-    //     closeModal("upload-post-image");
-    //     return window.alert("Error occurs when upload image!");
-    //   }
-    //   // https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/post-img/3b045270-33e0-4431-b827-ec310df3dc5c/1679222223223
-    //   if (data) {
-    //     form.setFieldValue(
-    //       "content",
-    //       form.values.content +
-    //         `![Image alt text](https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/post-img/${data.path}) "Image title"`
-    //     );
-    //     closeModal("upload-post-image");
-    //     return;
-    //   }
-    // }
     const imgUrl = URL.createObjectURL(file);
     form.setFieldValue(
       "content",
-      form.values.content + `![Alt text](${imgUrl}) "Image title"\n`
+      form.values.content + `![Alt text](${imgUrl}) "Image title"`
     );
-    setImages((current) => [...current, imgUrl]);
+    setImages((curr) => [...curr, { uri: imgUrl, file: file }]);
     closeAllModals();
   };
-  const handleFormSubmit = form.onSubmit((values) => {
-    console.log("images", images);
+
+  const handleFormSubmit = form.onSubmit(async (values) => {
+    setLoading(true);
+    if (user) {
+      const uploadTasks = [];
+      const imgList = images.filter((i) => values.content.includes(i.uri));
+      imgList.forEach((image, index) => {
+        const promise = supabase.storage
+          .from("post-img")
+          .upload(`${user.id}/${index}-${Date.now()}`, image.file);
+        uploadTasks.push(promise);
+      });
+      Promise.all(uploadTasks).then((uploadedImages) => {
+        console.log("u", uploadedImages);
+        let replaced = values.content;
+        uploadedImages.forEach((i, idx) => {
+          replaced = replaced.replace(
+            imgList[idx].uri,
+            "https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/post-img/" +
+              i.data.path
+          );
+          form.setFieldValue("content", replaced);
+        });
+        supabase
+          .from("post")
+          .insert({
+            title: values.title,
+            content: replaced,
+            profile_id: user.id,
+            type: "blog",
+            image_url: uploadedImages.map((i) => i.data.path),
+          })
+          .select("id")
+          .single()
+          .then(
+            (post) => {
+              const postTags = values.postTag.map((t) => ({
+                post_id: post.data.id,
+                tag_id: t,
+              }));
+              supabase
+                .from("post_tag")
+                .insert(postTags)
+                .then(
+                  () => {
+                    setLoading(false);
+                    router.back();
+                  },
+                  (error) => {
+                    console.log(error);
+                    setLoading(false);
+                    window.alert("An error occurs when tagging...");
+                  }
+                );
+            },
+            (error) => {
+              console.log(error);
+              setLoading(false);
+              window.alert("An error occurs when posting...");
+            }
+          );
+      });
+    } else {
+      setLoading(false);
+    }
   });
   return (
     <Layout>
@@ -121,7 +182,11 @@ export default function EditorPage({ tags }) {
             )}
           </Transition>
         </Affix>
-        <form onSubmit={handleFormSubmit} className="flex flex-col gap-1">
+        <form
+          onSubmit={handleFormSubmit}
+          className="relative flex flex-col gap-1"
+        >
+          <LoadingOverlay visible={loading} />
           <MultiSelect
             searchable
             required
@@ -158,15 +223,16 @@ export default function EditorPage({ tags }) {
                 <ActionIcon
                   variant="outline"
                   color={theme.primaryColor}
-                  onClick={() =>
+                  disabled={images.length >= 3}
+                  onClick={() => {
                     modals.open({
                       title: "Upload image",
                       children: (
                         <UploadImage handleLocalImage={handleLocalImage} />
                       ),
                       modalId: "upload-post-image",
-                    })
-                  }
+                    });
+                  }}
                 >
                   <IconPhotoPlus strokeWidth={1.5} />
                 </ActionIcon>
@@ -176,14 +242,21 @@ export default function EditorPage({ tags }) {
           <div className="relative">
             <Textarea
               autosize
-              minRows={10}
+              maxRows={20}
+              minRows={5}
               placeholder="Your markdown content here"
               {...form.getInputProps("content")}
             />
           </div>
+          <div className="self-end">{form.values.content.length} / 10000</div>
           <Text color="dimmed" size="sm">
             <b>Important:</b> Please do not modify image urls that are uploaded
             from your device, it may corrupt your post content.
+          </Text>
+          <Text color="dimmed" size="sm">
+            <b>Important:</b> Remote images are free to used. However, it is not
+            recommend to use many images in your post. You take your own
+            responsibility for remote images.
           </Text>
           <div className="mt-2 self-end">
             <Group>
@@ -196,9 +269,7 @@ export default function EditorPage({ tags }) {
                   modals.open({
                     title: "Preview",
                     children: (
-                      <ReactMarkdown className={mdStyle.markdownStyle}>
-                        {form.values.content}
-                      </ReactMarkdown>
+                      <MarkdownParser>{form.values.content}</MarkdownParser>
                     ),
                     size: "xl",
                   })
