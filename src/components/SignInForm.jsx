@@ -10,22 +10,68 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconLockExclamation } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function SignInForm() {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
   const [opened, { open, close }] = useDisclosure(false);
+  const [loading, setLoading] = useState(false);
+  const form = useForm({
+    initialValues: {
+      email: "",
+    },
+    validate: {
+      email: isEmail("Invalid email format"),
+    },
+  });
   const handleGoogleSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
     if (error) open();
   };
+  const handleEmailSignin = form.onSubmit(async (values) => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email: values.email,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+    if (error) {
+      if (error.message == "Signups not allowed for otp") {
+        form.setFieldError("email", "Could not find your email address");
+      } else {
+        form.setFieldError("email", "Unable to signin with your email");
+      }
+      return setLoading(false);
+    }
+    if (data) {
+      modals.open({
+        title: "Check your email",
+        children: (
+          <>
+            <Text size="sm">
+              An email has been sent to your email address. Please check either
+              inbox and spam emails. The email will expire in 24 hours.
+            </Text>
+            <Text color="dimmed" size="sm" mt="sm">
+              You can safely close this tab.
+            </Text>
+          </>
+        ),
+      });
+    }
+    return setLoading(false);
+  });
   const ErrorModal = () => {
     return (
       <Modal
@@ -83,23 +129,31 @@ export default function SignInForm() {
         <Text className="mx-auto" my="lg" color="dimmed">
           Sign in with Email address
         </Text>
-        <TextInput
-          placeholder="your@email.com"
-          size={"md"}
-          label={<Text size={"sm"}>Email Address</Text>}
-        />
-        <Text
-          component={Link}
-          href="#"
-          className="self-end font-medium"
-          color={theme.primaryColor}
-          size="sm"
-        >
-          Forgot password?
-        </Text>
-        <Button size={"md"} mt="lg">
-          <Text>Sign In</Text>
-        </Button>
+        <form onSubmit={handleEmailSignin}>
+          <TextInput
+            type="email"
+            placeholder="your@email.com"
+            size={"md"}
+            required
+            withAsterisk={false}
+            label={<Text size={"sm"}>Email Address</Text>}
+            {...form.getInputProps("email")}
+          />
+          <Stack>
+            <Text
+              component={Link}
+              href="#"
+              className="self-end font-medium"
+              color={theme.primaryColor}
+              size="sm"
+            >
+              Forgot password?
+            </Text>
+            <Button size={"md"} mt="lg" type="submit" loading={loading}>
+              <Text>Sign In</Text>
+            </Button>
+          </Stack>
+        </form>
         <Divider
           color={
             theme.colorScheme == "dark"

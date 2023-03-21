@@ -35,4 +35,5 @@ export const theme = {
       "#0F172A",
     ],
   },
+  loader: "dots",
 };
