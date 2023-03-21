@@ -259,9 +259,11 @@ export function AppHeader() {
                 <Menu.Target>
                   <Avatar
                     src={
-                      profile.avatar_url.includes("googleusercontent")
-                        ? profile.avatar_url
-                        : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                      profile.avatar_url
+                        ? profile.avatar_url.includes("googleusercontent")
+                          ? profile.avatar_url
+                          : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                        : `https://robohash.org/${profile.email}`
                     }
                     alt={"My avatar"}
                     radius="xl"

@@ -3,16 +3,19 @@ import { useProfile } from "@/utils/hooks/profile";
 import {
   ActionIcon,
   Anchor,
+  Badge,
   Box,
   Button,
   Center,
   Container,
   Divider,
+  Flex,
   Group,
   Loader,
   Menu,
   Paper,
   Select,
+  SimpleGrid,
   Stack,
   Text,
   Title,
@@ -187,9 +190,11 @@ export default function ProfileLayout({ username, children }) {
               >
                 <Image
                   src={
-                    profile.avatar_url.includes("googleusercontent")
-                      ? profile.avatar_url
-                      : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                    profile.avatar_url
+                      ? profile.avatar_url.includes("googleusercontent")
+                        ? profile.avatar_url
+                        : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                      : `https://robohash.org/${profile.email}`
                   }
                   fill
                   alt="Avatar"
@@ -276,13 +281,6 @@ export default function ProfileLayout({ username, children }) {
                     <Divider />
                   </>
                 )}
-                {profile.interest && (
-                  <>
-                    <Text size="sm" lineClamp={3}>
-                      {profile.interest}
-                    </Text>
-                  </>
-                )}
                 {profile.birthday && (
                   <Group>
                     <IconCake strokeWidth={1.5} size="24" color="gray" />
@@ -337,8 +335,14 @@ export default function ProfileLayout({ username, children }) {
               <Paper className="flex h-96 flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Achievements</Title>
               </Paper>
-              <Paper className="flex h-96 flex-col gap-2 rounded-lg border p-4 shadow">
+              <Paper className="h-96 gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Interest tags</Title>
+                {profile.interest &&
+                  profile.interest.map((i, index) => (
+                    <Badge key={index} variant="dot" mx={"sm"}>
+                      {i}
+                    </Badge>
+                  ))}
               </Paper>
             </section>
             {/* Main section */}
