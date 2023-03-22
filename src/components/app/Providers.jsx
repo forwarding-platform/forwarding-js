@@ -10,6 +10,7 @@ import { Notifications } from "@mantine/notifications";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import React, { useState } from "react";
+import RequireAuth from "../common/RequireAuth";
 
 export default function Providers({ children, pageProps }) {
   // Handle color scheme of the application
@@ -43,7 +44,7 @@ export default function Providers({ children, pageProps }) {
             colorScheme: colorScheme,
           }}
         >
-          <ModalsProvider>
+          <ModalsProvider modals={{ requireAuth: RequireAuth }}>
             <Notifications />
             {children}
           </ModalsProvider>

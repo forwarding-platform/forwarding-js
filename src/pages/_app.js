@@ -18,6 +18,11 @@ export default function App({ Component, pageProps }) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
+      <style jsx global>{`
+        html {
+          font-family: ${font.style.fontFamily};
+        }
+      `}</style>
       <Providers pageProps={pageProps}>
         <RouterTransition />
         <div className={font.className}>

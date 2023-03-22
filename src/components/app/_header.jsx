@@ -257,7 +257,24 @@ export function AppHeader() {
                 transitionProps={{ transition: "pop" }}
               >
                 <Menu.Target>
-                  <Avatar
+                  <UnstyledButton>
+                    <Image
+                      src={
+                        profile.avatar_url
+                          ? profile.avatar_url.includes("googleusercontent")
+                            ? profile.avatar_url
+                            : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                          : `https://robohash.org/${profile.email}`
+                      }
+                      width={36}
+                      height={36}
+                      priority
+                      alt="My avatar"
+                      title="Account management"
+                      className="rounded-full"
+                    />
+                  </UnstyledButton>
+                  {/* <Avatar
                     src={
                       profile.avatar_url
                         ? profile.avatar_url.includes("googleusercontent")
@@ -271,7 +288,7 @@ export function AppHeader() {
                     color={theme.primaryColor}
                     title="Account management"
                     // imageProps={{ refererPolicy: "no-referer" }}
-                  />
+                  /> */}
                 </Menu.Target>
                 <Menu.Dropdown className="rounded-lg shadow-md">
                   {/* </Menu.Item> */}

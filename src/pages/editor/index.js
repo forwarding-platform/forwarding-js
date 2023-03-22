@@ -1,4 +1,4 @@
-import MarkdownParser from "@/components/MarkdownParser";
+import MarkdownParser from "@/components/common/MarkdownParser";
 import UploadImage from "@/components/UploadImage";
 import Layout from "@/components/layouts/_layout";
 import { supabase } from "@/libs/supabase";

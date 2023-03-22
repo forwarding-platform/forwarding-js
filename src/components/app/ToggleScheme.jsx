@@ -14,6 +14,7 @@ export default function ToggleScheme() {
     <Group position="center">
       <SegmentedControl
         value={colorScheme}
+        size="xs"
         onChange={(value) => toggleColorScheme()}
         data={[
           {
@@ -21,7 +22,7 @@ export default function ToggleScheme() {
             label: (
               <Center>
                 <IconSun size="1rem" stroke={1.5} />
-                <Box ml={10}>Light</Box>
+                {/* <Box ml={10}>Light</Box> */}
               </Center>
             ),
           },
@@ -30,7 +31,7 @@ export default function ToggleScheme() {
             label: (
               <Center>
                 <IconMoon size="1rem" stroke={1.5} />
-                <Box ml={10}>Dark</Box>
+                {/* <Box ml={10}>Dark</Box> */}
               </Center>
             ),
           },

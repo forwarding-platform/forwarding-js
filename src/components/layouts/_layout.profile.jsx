@@ -58,18 +58,6 @@ export default function ProfileLayout({ username, children }) {
       href: `/user/${username}/questions`,
       label: "Questions",
     },
-    {
-      href: `/user/${username}/answers`,
-      label: "Answers",
-    },
-    {
-      href: `/user/${username}/quizzes`,
-      label: "Quiz Records",
-    },
-    {
-      href: `/user/${username}/practices`,
-      label: "Practice Records",
-    },
   ];
   const handleChangeCoverPhoto = async (file) => {
     if (user) {
@@ -267,10 +255,10 @@ export default function ProfileLayout({ username, children }) {
             </div>
           </div>
         </Paper>
-        <Container size="lg" my="lg">
+        <Container size="lg" mt="lg">
           <div className="flex w-full flex-col gap-3 lg:flex-row lg:gap-5">
             {/* Side sections */}
-            <section className="flex basis-2/5 flex-col gap-3 lg:gap-5">
+            <section className="flex basis-2/5 flex-col gap-3 lg:sticky lg:bottom-0 lg:gap-5 lg:self-end">
               <Paper className="flex flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Intro</Title>
                 {profile.introduction && (
@@ -332,11 +320,13 @@ export default function ProfileLayout({ username, children }) {
                     </Group>
                   ))}
               </Paper>
-              <Paper className="flex h-96 flex-col gap-2 rounded-lg border p-4 shadow">
+              <Paper className="flex min-h-[180px] flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Achievements</Title>
               </Paper>
-              <Paper className="h-96 gap-2 rounded-lg border p-4 shadow">
-                <Title order={3}>Interest tags</Title>
+              <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">
+                <Title order={3} mb="sm">
+                  Interest tags
+                </Title>
                 {profile.interest &&
                   profile.interest.map((i, index) => (
                     <Badge key={index} variant="dot" mx={"sm"}>
@@ -364,9 +354,9 @@ export default function ProfileLayout({ username, children }) {
                   onChange={(value) => router.push(value)}
                 />
               </div>
-              <Paper shadow="lg" px="md" py="sm">
+              <Box px="md" py="sm">
                 {children}
-              </Paper>
+              </Box>
             </section>
           </div>
         </Container>
