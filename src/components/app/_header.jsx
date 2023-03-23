@@ -40,6 +40,7 @@ import { usePathname } from "next/navigation";
 import { useProfile } from "@/utils/hooks/profile";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export const useStyles = createStyles((theme) => ({
   link: {
@@ -137,6 +138,7 @@ export function AppHeader() {
   const { width } = useViewportSize();
   const [{ y }] = useWindowScroll();
   const supabase = useSupabaseClient();
+  const router = useRouter();
   const user = useUser();
   const { profile, error, isLoading, isValidating } = useProfile(
     "id",
@@ -144,7 +146,11 @@ export function AppHeader() {
   );
 
   const links = appSubLinks.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
+    <UnstyledButton
+      className={classes.subLink}
+      key={item.title}
+      onClick={() => router.push(item.href)}
+    >
       <div className="flex flex-nowrap items-center gap-4">
         <ThemeIcon size={34} variant="default" radius="md">
           <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
@@ -274,21 +280,6 @@ export function AppHeader() {
                       className="rounded-full"
                     />
                   </UnstyledButton>
-                  {/* <Avatar
-                    src={
-                      profile.avatar_url
-                        ? profile.avatar_url.includes("googleusercontent")
-                          ? profile.avatar_url
-                          : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
-                        : `https://robohash.org/${profile.email}`
-                    }
-                    alt={"My avatar"}
-                    radius="xl"
-                    component={UnstyledButton}
-                    color={theme.primaryColor}
-                    title="Account management"
-                    // imageProps={{ refererPolicy: "no-referer" }}
-                  /> */}
                 </Menu.Target>
                 <Menu.Dropdown className="rounded-lg shadow-md">
                   {/* </Menu.Item> */}
@@ -384,28 +375,26 @@ export function AppHeader() {
           my="sm"
           color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
         />
-
-        {!profile ||
-          (!user && (
-            <Group position="center" grow pb="xl" px="md">
-              <Button
-                size="xs"
-                variant="outline"
-                component={Link}
-                href="/auth/signin"
-              >
-                Sign in
-              </Button>
-              <Button
-                size="xs"
-                variant="filled"
-                component={Link}
-                href="/auth/signup"
-              >
-                Sign up
-              </Button>
-            </Group>
-          ))}
+        {!user && (
+          <Group position="center" grow pb="xl" px="md">
+            <Button
+              size="xs"
+              variant="outline"
+              component={Link}
+              href="/auth/signin"
+            >
+              Sign in
+            </Button>
+            <Button
+              size="xs"
+              variant="filled"
+              component={Link}
+              href="/auth/signup"
+            >
+              Sign up
+            </Button>
+          </Group>
+        )}
       </Drawer>
     </Paper>
   );

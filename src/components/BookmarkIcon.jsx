@@ -9,14 +9,15 @@ export default function BookmarkIcon({ postId, bookmarks, mutate }) {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
   const bookmarked = bookmarks?.includes(postId);
-  if (bookmarks) {
-    const handleBookmark = async () => {
-      if (!user)
-        return modals.openContextModal({
-          modal: "requireAuth",
-          title: "Authentication Required",
-        });
-      else {
+  const handleBookmark = async () => {
+    if (!user) {
+      console.log("no");
+      return modals.openContextModal({
+        modal: "requireAuth",
+        title: "Authentication Required",
+      });
+    } else {
+      if (bookmarks) {
         if (bookmarked) {
           const { data } = await supabase
             .from("profile_bookmark")
@@ -40,21 +41,16 @@ export default function BookmarkIcon({ postId, bookmarks, mutate }) {
           if (data) mutate([...bookmarks, data.post_id]);
         }
       }
-    };
+    }
+  };
 
-    return (
-      <ActionIcon onClick={handleBookmark} variant="subtle" radius="xl">
-        <IconBookmark
-          strokeWidth={1.5}
-          fill={bookmarked ? theme.fn.primaryColor() : "transparent"}
-          color={theme.fn.primaryColor()}
-        />
-      </ActionIcon>
-    );
-  } else
-    return (
-      <ActionIcon variant="subtle" radius="xl">
-        <IconBookmark strokeWidth={1.5} color={theme.fn.primaryColor()} />
-      </ActionIcon>
-    );
+  return (
+    <ActionIcon onClick={handleBookmark} variant="subtle" radius="xl">
+      <IconBookmark
+        strokeWidth={1.5}
+        fill={bookmarked ? theme.fn.primaryColor() : "transparent"}
+        color={theme.fn.primaryColor()}
+      />
+    </ActionIcon>
+  );
 }

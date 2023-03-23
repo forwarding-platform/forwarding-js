@@ -29,7 +29,12 @@ export default function SignUpForm() {
         size="md"
         className="shadow"
         leftIcon={
-          <Image src={"/google.svg"} alt="google" width={24} height={24} />
+          <Image
+            src={"/brands/google.svg"}
+            alt="google"
+            width={24}
+            height={24}
+          />
         }
       >
         Sign Up With Google
