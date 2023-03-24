@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+.markdownStyle {
+  font-family: "Poppins";
+}
+
 .markdownStyle img {
   max-width: 100%;
   height: auto;

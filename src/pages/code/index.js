@@ -46,7 +46,7 @@ export default function CodePage() {
     }
   };
 
-  const executeCode = async (payload) => {
+  const executeCode = (payload) => {
     setSubmitting(true);
     axios
       .post(
@@ -113,7 +113,6 @@ export default function CodePage() {
               source_code: Buffer.from(code).toString("base64"),
               stdin: null,
             });
-            setSubmitting(true);
           }}
           loading={submitting}
           leftIcon={<IconPlayerPlay size={16} />}
@@ -139,7 +138,7 @@ export default function CodePage() {
               </Text>
             )}
             {result?.stdout && (
-              <pre pre className="whitespace-pre-wrap text-sm leading-tight">
+              <pre className="whitespace-pre-wrap text-sm leading-tight">
                 {Buffer.from(result?.stdout, "base64").toString()}
               </pre>
             )}
