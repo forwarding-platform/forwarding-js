@@ -1,12 +1,10 @@
 import Layout from "@/components/layouts/_layout";
-import { supabaseAdmin } from "@/libs/adminSupabase";
 import { supabase } from "@/libs/supabase";
 import {
   Anchor,
   Box,
   Button,
   Card,
-  Center,
   Container,
   Divider,
   Group,
@@ -73,7 +71,7 @@ export async function getStaticProps(ctx) {
     .eq("id", params.group)
     .single();
 
-  const { data: challenge, error } = await supabaseAdmin
+  const { data: challenge, error } = await supabase
     .from("practice_challenge")
     .select("id, title, score, slug, difficulty")
     .eq("practice_id", params.group);

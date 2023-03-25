@@ -1,7 +1,7 @@
 import MarkdownParser from "@/components/common/MarkdownParser";
 import Layout from "@/components/layouts/_layout";
 import { languageOptions } from "@/constants/languageOptions";
-import { supabaseAdmin } from "@/libs/adminSupabase";
+import { supabase } from "@/libs/supabase";
 import {
   Alert,
   Anchor,
@@ -302,16 +302,14 @@ export default function ChallengePage({ challenge }) {
 }
 
 export async function getStaticPaths() {
-  const { data } = await supabaseAdmin
-    .from("practice_challenge")
-    .select("slug");
+  const { data } = await supabase.from("practice_challenge").select("slug");
   const paths = data.map((p) => ({ params: { slug: p.slug.toString() } }));
   return { paths, fallback: true };
 }
 
 export async function getStaticProps(ctx) {
   const { params } = ctx;
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("practice_challenge")
     .select("*, practice(id, title)")
     .eq("slug", params.slug)
