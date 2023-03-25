@@ -47,8 +47,9 @@ export default function PracticePage({ practices }) {
                     {practice.title}
                   </Text>
                   <Text size={"sm"} color="dimmed">
-                    {practice.practice_challenge?.length || 0} challenge
-                    {practice.practice_challenge.length < 2 && "s"}
+                    {/* {practice.practice_challenge?.length || 0} challenge
+                    {practice.practice_challenge.length < 2 && "s"} */}
+                    0 challenge
                   </Text>
                 </div>
               </Card>
@@ -61,10 +62,7 @@ export default function PracticePage({ practices }) {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from("practice")
-    .select("*, practice_challenge(*)");
-  console.log("----------------", data);
+  const { data, error } = await supabase.from("practice").select("*");
   return {
     props: {
       practices: data,

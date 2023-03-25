@@ -46,8 +46,8 @@ export default function ChallengePage({ challenge }) {
   const items = [
     { title: "Practice", href: "/practice" },
     {
-      title: challenge.practice.title,
-      href: `/practice/${challenge.practice.id}`,
+      title: challenge?.practice?.title,
+      href: `/practice/${challenge?.practice?.id}`,
     },
     { title: challenge.title, href: `#` },
   ].map((item, index, arr) =>
