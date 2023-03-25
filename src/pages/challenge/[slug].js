@@ -43,6 +43,10 @@ export default function ChallengePage({ challenge }) {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState([]);
   const { scrollIntoView, targetRef } = useScrollIntoView({ offset: 150 });
+  useEffect(() => {
+    if (result.length !== 0 && submitting == false) scrollIntoView();
+  }, [submitting]);
+  if (challenge?.length == 0) return <Text>No challenge yet!</Text>;
   const items = [
     { title: "Practice", href: "/practice" },
     {
@@ -68,10 +72,6 @@ export default function ChallengePage({ challenge }) {
       console.warn("Case not handled", tag, data);
     }
   };
-
-  useEffect(() => {
-    if (result.length !== 0 && submitting == false) scrollIntoView();
-  }, [submitting]);
 
   const testCode = () => {
     setSubmitting(true);
