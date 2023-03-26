@@ -233,7 +233,9 @@ export default function ProfileLayout({ username, children }) {
                       <Menu.Item component={Link} href="/editor">
                         New post
                       </Menu.Item>
-                      <Menu.Item>New question</Menu.Item>
+                      <Menu.Item component={Link} href="/editor/question">
+                        New question
+                      </Menu.Item>
                     </Menu.Dropdown>
                   </Menu>
                   <Button
@@ -322,17 +324,21 @@ export default function ProfileLayout({ username, children }) {
               </Paper>
               <Paper className="flex min-h-[180px] flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Achievements</Title>
+                <Text color="dimmed">No achievement</Text>
               </Paper>
               <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">
                 <Title order={3} mb="sm">
                   Interest tags
                 </Title>
-                {profile.interest &&
+                {profile.interest ? (
                   profile.interest.map((i, index) => (
                     <Badge key={index} variant="dot" mx={"sm"}>
                       {i}
                     </Badge>
-                  ))}
+                  ))
+                ) : (
+                  <Text color="dimmed">No interest tag</Text>
+                )}
               </Paper>
             </section>
             {/* Main section */}

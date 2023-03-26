@@ -2,10 +2,10 @@ import { Anchor, Text } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Montserrat } from "next/font/google";
-import styles from "@/styles/logo.module.css";
+// import { Montserrat } from "next/font/google";
+// import styles from "@/styles/logo.module.css";
 
-const font = Montserrat({ subsets: ["latin"] });
+// const font = Montserrat({ subsets: ["latin"] });
 
 export default function AppLogo() {
   return (
@@ -23,7 +23,7 @@ export default function AppLogo() {
         fw={"900"}
         variant="gradient"
         gradient={{ from: "purple", to: "indigo", deg: 45 }}
-        className={`${font.className} ${styles.logo} hover:animate-move hover:bg-clip-text hover:text-transparent`}
+        className={` font-black hover:animate-move hover:bg-clip-text hover:text-transparent`}
       >
         FORWARDING
       </Text>

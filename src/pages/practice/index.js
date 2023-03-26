@@ -1,4 +1,5 @@
 import Layout from "@/components/layouts/_layout";
+import { supabaseAdmin } from "@/libs/adminSupabase";
 import { supabase } from "@/libs/supabase";
 import {
   Anchor,
@@ -20,41 +21,42 @@ export default function PracticePage({ practices }) {
       <Container>
         <Title my="md">Practices</Title>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {practices.map((practice) => (
-            <Anchor
-              key={practice.id}
-              component={Link}
-              href={`/practice/${practice.id}`}
-              unstyled
-            >
-              <Card
-                withBorder
-                shadow="md"
-                h="100px"
-                radius="md"
-                className="ease transition-all hover:-translate-y-1 "
-                sx={(theme) => ({
-                  "&:hover": {
-                    borderColor: theme.fn.primaryColor(),
-                  },
-                })}
+          {practices
+            .sort((a, b) => a.id - b.id)
+            .map((practice) => (
+              <Anchor
+                key={practice.id}
+                component={Link}
+                href={`/practice/${practice.id}`}
+                unstyled
               >
-                <div className="flex h-full flex-col justify-center ">
-                  <Text
-                    className="font-semibold"
-                    sx={(theme) => ({ color: theme.fn.primaryColor() })}
-                  >
-                    {practice.title}
-                  </Text>
-                  <Text size={"sm"} color="dimmed">
-                    {/* {practice.practice_challenge?.length || 0} challenge
-                    {practice.practice_challenge.length < 2 && "s"} */}
-                    0 challenge
-                  </Text>
-                </div>
-              </Card>
-            </Anchor>
-          ))}
+                <Card
+                  withBorder
+                  shadow="md"
+                  h="100px"
+                  radius="md"
+                  className="ease transition-all hover:-translate-y-1 "
+                  sx={(theme) => ({
+                    "&:hover": {
+                      borderColor: theme.fn.primaryColor(),
+                    },
+                  })}
+                >
+                  <div className="flex h-full flex-col justify-center ">
+                    <Text
+                      className="font-semibold"
+                      sx={(theme) => ({ color: theme.fn.primaryColor() })}
+                    >
+                      {practice.title}
+                    </Text>
+                    <Text size={"sm"} color="dimmed">
+                      {practice.challenge_count} challenge
+                      {practice.challenge_count >= 2 && "s"}
+                    </Text>
+                  </div>
+                </Card>
+              </Anchor>
+            ))}
         </div>
       </Container>
     </Layout>
@@ -62,7 +64,9 @@ export default function PracticePage({ practices }) {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase.from("practice").select("*");
+  const { data, error } = await supabaseAdmin
+    .rpc("get_practice_count_challenge")
+    .select("*");
   return {
     props: {
       practices: data,

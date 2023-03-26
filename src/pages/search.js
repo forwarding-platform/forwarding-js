@@ -6,6 +6,7 @@ import { useBookmark } from "@/utils/hooks/bookmark";
 import {
   Badge,
   Box,
+  Button,
   Card,
   Center,
   Container,
@@ -17,6 +18,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useUser } from "@supabase/auth-helpers-react";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -48,11 +50,20 @@ export default function Search() {
             handleSubmit();
           }}
         >
+          <Button
+            variant="subtle"
+            radius="md"
+            onClick={() => router.push("/post")}
+            leftIcon={<IconArrowNarrowLeft strokeWidth={1.5} />}
+          >
+            Back
+          </Button>
           <TextInput
             placeholder="search"
             label="Search posts"
             type="search"
             value={searchValue}
+            autoFocus
             onChange={(e) => setSearchValue(e.target.value)}
           />
         </form>

@@ -19,7 +19,7 @@ export default function PostPage({ post }) {
           <Button
             variant="subtle"
             radius="md"
-            onClick={() => router.back()}
+            onClick={() => router.push("/post")}
             leftIcon={<IconArrowNarrowLeft strokeWidth={1.5} />}
           >
             Back

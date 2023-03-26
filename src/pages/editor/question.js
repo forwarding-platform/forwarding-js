@@ -1,11 +1,12 @@
 import MarkdownParser from "@/components/common/MarkdownParser";
-import Layout from "@/components/layouts/_layout";
 import UploadImage from "@/components/UploadImage";
+import Layout from "@/components/layouts/_layout";
 import { supabase } from "@/libs/supabase";
 import { useProfile } from "@/utils/hooks/profile";
 
 import {
   ActionIcon,
+  Affix,
   Anchor,
   Button,
   Container,
@@ -13,27 +14,31 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
+  rem,
   Text,
   Textarea,
   TextInput,
   Title,
   Tooltip,
+  Transition,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useWindowScroll } from "@mantine/hooks";
 import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconArrowNarrowLeft,
+  IconChevronUp,
   IconHelpSmall,
   IconPhotoPlus,
 } from "@tabler/icons-react";
 
-import TopTopButton from "@/components/common/TopTopButton";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function EditorPage({ tags }) {
+  const [{ y }, scrollTo] = useWindowScroll();
   const theme = useMantineTheme();
   const router = useRouter();
   const supabase = useSupabaseClient();
@@ -53,7 +58,7 @@ export default function EditorPage({ tags }) {
       content: (value) =>
         value.length === 0
           ? "This field cannot be empty"
-          : value.length > 10000
+          : value.length > 2000
           ? "Maximum character exceeded"
           : null,
     },
@@ -109,7 +114,7 @@ export default function EditorPage({ tags }) {
             title: values.title,
             content: replaced,
             profile_id: user.id,
-            type: "blog",
+            type: "question",
             image_url: uploadedImages.map((i) => i.data.path),
           })
           .select("id")
@@ -156,10 +161,24 @@ export default function EditorPage({ tags }) {
           >
             <IconArrowNarrowLeft strokeWidth={1.5} />
           </ActionIcon>
-          <Title>New Post Editor</Title>
+          <Title>New Question Editor</Title>
         </Group>
         <Divider mb="md" />
-        <TopTopButton />
+        <Affix position={{ bottom: rem(20), right: rem(20) }} zIndex={20000000}>
+          <Transition transition="slide-up" mounted={y > 0}>
+            {(transitionStyles) => (
+              <ActionIcon
+                title="Scroll to top"
+                size="xl"
+                radius="xl"
+                style={transitionStyles}
+                onClick={() => scrollTo({ y: 0 })}
+              >
+                <IconChevronUp strokeWidth={1.5} />
+              </ActionIcon>
+            )}
+          </Transition>
+        </Affix>
         <form
           onSubmit={handleFormSubmit}
           className="relative flex flex-col gap-1"
@@ -226,7 +245,7 @@ export default function EditorPage({ tags }) {
               {...form.getInputProps("content")}
             />
           </div>
-          <div className="self-end">{form.values.content.length} / 10000</div>
+          <div className="self-end">{form.values.content.length} / 2000</div>
           <Text color="dimmed" size="sm">
             <b>Important:</b> Please do not modify image urls that are uploaded
             from your device, it may corrupt your post content.

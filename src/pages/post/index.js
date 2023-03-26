@@ -31,12 +31,13 @@ export default function PostsPage({ tags }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
   const supabase = useSupabaseClient();
-
+  const router = useRouter();
   useEffect(() => {
     const getPageCount = async () => {
       const { count } = await supabase
         .from("post")
-        .select("id", { count: "exact" });
+        .select("id", { count: "exact" })
+        .eq("type", "blog");
       setTotalPage(Math.ceil(count / 10 - 1));
     };
     getPageCount();
@@ -45,7 +46,12 @@ export default function PostsPage({ tags }) {
   return (
     <Layout>
       <Container>
-        <TextInput placeholder="search" label="Search posts" type="search" />
+        <TextInput
+          placeholder="Search posts"
+          label="Search posts"
+          type="search"
+          onClick={() => router.push("/search")}
+        />
         <Stack py="sm">
           <Page page={pageIndex} />
           <div className="hidden">
