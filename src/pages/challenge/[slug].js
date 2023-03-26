@@ -1,6 +1,7 @@
 import MarkdownParser from "@/components/common/MarkdownParser";
 import Layout from "@/components/layouts/_layout";
 import { languageOptions } from "@/constants/languageOptions";
+import { supabaseAdmin } from "@/libs/adminSupabase";
 import { supabase } from "@/libs/supabase";
 import {
   Alert,
@@ -43,28 +44,14 @@ export default function ChallengePage({ challenge }) {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState([]);
   const { scrollIntoView, targetRef } = useScrollIntoView({ offset: 150 });
-  useEffect(() => {
-    if (result.length !== 0 && submitting == false) scrollIntoView();
-  }, [submitting]);
-  if (challenge?.length == 0) return <Text>No challenge yet!</Text>;
-  const items = [
+  const breadcrumbItems = [
     { title: "Practice", href: "/practice" },
     {
       title: challenge?.practice?.title,
       href: `/practice/${challenge?.practice?.id}`,
     },
-    { title: challenge.title, href: `#` },
-  ].map((item, index, arr) =>
-    index == arr.length - 1 ? (
-      <Text color="dimmed" size="sm" key={index}>
-        {item.title}
-      </Text>
-    ) : (
-      <Anchor size="sm" component={Link} href={item.href} key={index}>
-        {item.title}
-      </Anchor>
-    )
-  );
+    { title: challenge?.title, href: "#" },
+  ];
   const handleEditorChange = (tag, data) => {
     if (tag == "code") {
       setCode(data);
@@ -72,6 +59,10 @@ export default function ChallengePage({ challenge }) {
       console.warn("Case not handled", tag, data);
     }
   };
+
+  useEffect(() => {
+    if (result.length !== 0 && submitting == false) scrollIntoView();
+  }, [submitting]);
 
   const testCode = () => {
     setSubmitting(true);
@@ -96,7 +87,6 @@ export default function ChallengePage({ challenge }) {
       )
       .then((rs) => {
         setResult([rs.data]);
-        console.log(rs);
       })
       .catch((err) => console.log(err))
       .finally(() => setSubmitting(false));
@@ -138,7 +128,6 @@ export default function ChallengePage({ challenge }) {
       )
       .then(
         (data) => {
-          console.log("data", data.data.submissions);
           data.data.submissions.forEach((s) => {
             let status = s.status.id;
             if (status === 1 || status === 2) {
@@ -163,7 +152,17 @@ export default function ChallengePage({ challenge }) {
           my="md"
           separator={<IconChevronRight strokeWidth={1} size={14} />}
         >
-          {items}
+          {breadcrumbItems.map((item, index, arr) =>
+            index == arr.length - 1 ? (
+              <Text color="dimmed" size="sm" key={index}>
+                {item?.title}
+              </Text>
+            ) : (
+              <Anchor size="sm" component={Link} href={item.href} key={index}>
+                {item?.title}
+              </Anchor>
+            )
+          )}
         </Breadcrumbs>
         <Title>{challenge.title}</Title>
         <Group>
@@ -302,19 +301,21 @@ export default function ChallengePage({ challenge }) {
 }
 
 export async function getStaticPaths() {
-  const { data } = await supabase.from("practice_challenge").select("slug");
+  const { data } = await supabaseAdmin
+    .from("practice_challenge")
+    .select("slug");
   const paths = data.map((p) => ({ params: { slug: p.slug.toString() } }));
-  return { paths, fallback: true };
+  return { paths, fallback: "blocking" };
 }
 
 export async function getStaticProps(ctx) {
   const { params } = ctx;
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("practice_challenge")
     .select("*, practice(id, title)")
-    .eq("slug", params.slug)
+    .eq("slug", params.slug.toString())
     .single();
-  if (error) {
+  if (error || !data) {
     console.log(error);
     return {
       notFound: true,

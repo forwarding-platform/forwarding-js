@@ -1,4 +1,5 @@
 import Layout from "@/components/layouts/_layout";
+import { supabaseAdmin } from "@/libs/adminSupabase";
 import { supabase } from "@/libs/supabase";
 import {
   Anchor,
@@ -71,13 +72,12 @@ export async function getStaticProps(ctx) {
     .eq("id", params.group)
     .single();
 
-  const { data: challenge, error } = await supabase
+  const { data: challenge, error } = await supabaseAdmin
     .from("practice_challenge")
     .select("id, title, score, slug, difficulty")
     .eq("practice_id", params.group);
 
   if (error || tError) {
-    console.log(error);
     return {
       notFound: true,
     };

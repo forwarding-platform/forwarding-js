@@ -80,7 +80,6 @@ export default function Search() {
 }
 
 function Page({ post }) {
-  console.log("p", post.id);
   const user = useUser();
   const router = useRouter();
   const { bookmarks, mutate } = useBookmark(user);

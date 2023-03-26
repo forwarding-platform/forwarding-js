@@ -7,13 +7,6 @@ import { AppHeader } from "../app/_header";
 
 export default function Layout({ children }) {
   const theme = useMantineTheme();
-  const session = useSession();
-  useEffect(() => {
-    if (session) {
-      console.log("exp", session.expires_at);
-      console.log("expIn", session.expires_in);
-    }
-  }, [session]);
   return (
     <>
       <AppShell

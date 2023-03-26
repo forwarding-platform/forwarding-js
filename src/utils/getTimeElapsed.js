@@ -23,8 +23,3 @@ export function getTimeElapsed(createdDate) {
     return createdDate.format("YYYY-MM-DD");
   }
 }
-
-// Example usage:
-const createdDate = dayjs("2023-03-22T12:34:56+01:00"); // Replace with your created date
-const timeElapsed = getTimeElapsed(createdDate);
-console.log(timeElapsed); // Output: 3 hours ago (assuming current time is 2023-03-22T15:34:56+01:00)
