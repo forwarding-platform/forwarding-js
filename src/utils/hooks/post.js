@@ -35,28 +35,48 @@ export const usePostPagination = (page, type = "blog") => {
   };
 };
 
-export const useArticleInfiniteLoading = (type = "blog") => {
+export const useArticleInfiniteLoading = (type = "blog", searchString, tag) => {
   const supabase = useSupabaseClient();
+  const tagString = tag?.join(".");
   const { data, ...rest } = useSWRInfinite(
-    (index) => [`post-${type}-page-${index}`, index],
+    (index) => [
+      `post-${type}-page-${index}&q=${searchString}&t=${tagString}`,
+      index,
+    ],
     async ([key, index]) => {
       const { from, to } = getPagination(index);
-      const { data, error } = await supabase
+      let query = supabase
         .from("post")
         .select(
           "*, post_tag!inner(tag_id, tag!inner(name)), profile!post_profile_id_fkey(username, avatar_url, email, name)"
         )
-        .eq("type", type)
-        .in("post_tag.tag_id", ["1"])
+        .eq("type", type);
+      if (searchString) {
+        query = query.textSearch("title", searchString, { type: "plain" });
+      }
+      if (tag.length !== 0) {
+        query = query.in("post_tag.tag_id", tag);
+      }
+      const { data, error } = await query
         .order("created_at", { ascending: false })
         .range(from, to - 1);
+      // const { data, error } = await supabase
+      //   .from("post")
+      //   .select(
+      //     "*, post_tag!inner(tag_id, tag!inner(name)), profile!post_profile_id_fkey(username, avatar_url, email, name)"
+      //   )
+      //   .eq("type", type)
+      //   .in("post_tag.tag_id", ["1"])
+      //   .order("created_at", { ascending: false })
+      //   .range(from, to - 1);
       if (error) {
         throw new Error(error);
       }
       return {
         data,
       };
-    }
+    },
+    {}
   );
   return {
     data: data ? data.map((d) => d.data) : [],
