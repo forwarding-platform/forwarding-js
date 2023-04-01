@@ -69,7 +69,7 @@ export default function PostDetailPage({ post, morePost }) {
                 post.profile.avatar_url
                   ? post.profile.avatar_url.includes("googleusercontent")
                     ? post.profile.avatar_url
-                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${post.profile.avatar_url}`
                   : `https://robohash.org/${post.profile.email}`
               }
               alt="svt"
@@ -107,7 +107,7 @@ export default function PostDetailPage({ post, morePost }) {
             <Group my="sm" position="apart">
               <div>
                 {post.post_tag.map((tag, index) => (
-                  <Badge variant="dot" size="sm" key={index}>
+                  <Badge variant="dot" size="sm" key={index} mr="xs">
                     {tag.tag.name}
                   </Badge>
                 ))}

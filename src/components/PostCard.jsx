@@ -51,7 +51,7 @@ export default function PostCard({ post }) {
                 post.profile.avatar_url
                   ? post.profile.avatar_url.includes("googleusercontent")
                     ? post.profile.avatar_url
-                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${post.profile.avatar_url}`
                   : `https://robohash.org/${post.profile.email}`
               }
               alt="svt"

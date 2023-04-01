@@ -13,3 +13,11 @@
   margin-right: auto;
   margin-bottom: 10px;
 }
+
+.markdownStyle p {
+  margin: 0 0;
+}
+
+.markdownStyle h1, .markdownStyle h2, .markdownStyle h3, .markdownStyle h4, .markdownStyle h5, .markdownStyle h6 {
+  margin-top: 10px;
+}

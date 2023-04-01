@@ -1,6 +1,5 @@
 import Layout from "@/components/layouts/_layout";
 import { templateList } from "@/constants/sandpackTemplate";
-import { Sandpack } from "@codesandbox/sandpack-react";
 import {
   Button,
   Center,

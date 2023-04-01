@@ -11,7 +11,7 @@
   "dependencies": {
     "@akebifiky/remark-simple-plantuml": "^1.0.2",
     "@codemirror/autocomplete": "^6.4.2",
-    "@codesandbox/sandpack-react": "^2.1.11",
+    "@codesandbox/sandpack-react": "^2.2.0",
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
     "@mantine/carousel": "^6.0.1",

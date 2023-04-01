@@ -81,7 +81,7 @@ export default function ProfilePage({ profile }) {
               />
             </Group>
             <Box my={"sm"}>
-              <Link href={`/post/${post.slug}`} className=" hover:underline">
+              <Link href={`/qna/${post.slug}`} className=" hover:underline">
                 <Title order={3}>{post.title}</Title>
               </Link>
             </Box>

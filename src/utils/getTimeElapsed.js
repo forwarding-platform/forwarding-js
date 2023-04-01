@@ -7,7 +7,7 @@ export function getTimeElapsed(createdDate) {
   const duration = _duration(now.diff(createdDate));
 
   if (duration.asMinutes() < 60) {
-    if (Math.floor(duration.asMinutes()) < 0) return "a few seconds ago";
+    if (Math.floor(duration.asMinutes()) < 1) return "a few seconds ago";
     return `${Math.floor(duration.asMinutes())} minute${
       Math.floor(duration.asMinutes()) === 1 ? "" : "s"
     } ago`;

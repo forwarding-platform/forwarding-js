@@ -19,3 +19,26 @@ export const useAnswerCount = (postId) => {
     ...rest,
   };
 };
+
+export const useAnswers = (postId) => {
+  const supabase = useSupabaseClient();
+  const { data: answers, ...rest } = useSWR(
+    postId ? `answers-${postId}` : null,
+    async () => {
+      const { data, error } = await supabase
+        .from("answer")
+        .select("*, profile(name, username, avatar_url)")
+        .eq("post_id", postId)
+        .order("created_at", { ascending: false });
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
+      if (data) return data;
+    }
+  );
+  return {
+    answers,
+    ...rest,
+  };
+};

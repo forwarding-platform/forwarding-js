@@ -1,11 +1,12 @@
 import BookmarkIcon from "@/components/BookmarkIcon";
+import CommentCard from "@/components/CommentCard";
 import CommentEditor from "@/components/CommentEditor";
 import MarkdownParser from "@/components/common/MarkdownParser";
 import HeartIcon from "@/components/HeartIcon";
 import Layout from "@/components/layouts/_layout";
 import { supabase } from "@/libs/supabase";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
-import { useAnswerCount } from "@/utils/hooks/answer";
+import { useAnswerCount, useAnswers } from "@/utils/hooks/answer";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import { useLike } from "@/utils/hooks/like";
 import {
@@ -18,6 +19,7 @@ import {
   Container,
   Divider,
   Group,
+  Loader,
   Stack,
   Text,
   Title,
@@ -44,6 +46,24 @@ export default function PostDetailPage({ post, morePost }) {
   const theme = useMantineTheme();
   const { bookmarks, mutate } = useBookmark(user);
   const { answerCount } = useAnswerCount(post.id);
+  const { scrollIntoView, targetRef } = useScrollIntoView();
+  const {
+    answers,
+    mutate: mutateAnswer,
+    isLoading: isAnswerLoading,
+  } = useAnswers(post.id);
+  if (answers?.length !== 0 && post.accepted_answer) {
+    let i = 0;
+    for (let j = 0; j < answers?.length; j++) {
+      if (answers[j].id === post.accepted_answer) {
+        // Swap the current element with the element at index i
+        let temp = answers[j];
+        answers[j] = answers[i];
+        answers[i] = temp;
+        i++;
+      }
+    }
+  }
   return (
     <Layout>
       <Container size={"xl"}>
@@ -72,7 +92,7 @@ export default function PostDetailPage({ post, morePost }) {
                 post.profile.avatar_url
                   ? post.profile.avatar_url.includes("googleusercontent")
                     ? post.profile.avatar_url
-                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${post.profile.avatar_url}`
                   : `https://robohash.org/${post.profile.email}`
               }
               alt="svt"
@@ -110,14 +130,18 @@ export default function PostDetailPage({ post, morePost }) {
             <Group my="sm" position="apart">
               <div>
                 {post.post_tag.map((tag, index) => (
-                  <Badge variant="dot" size="sm" key={index}>
+                  <Badge variant="dot" size="sm" key={index} mr="xs">
                     {tag.tag.name}
                   </Badge>
                 ))}
               </div>
               <Group>
                 <Tooltip label="Answer">
-                  <UnstyledButton component={Group} spacing={5}>
+                  <UnstyledButton
+                    component={Group}
+                    spacing={5}
+                    onClick={() => scrollIntoView()}
+                  >
                     <Text>{answerCount ?? "0"}</Text>
                     <IconMessageCircle
                       strokeWidth={1.5}
@@ -135,12 +159,29 @@ export default function PostDetailPage({ post, morePost }) {
             <Card shadow="lg" radius="md">
               <MarkdownParser>{post.content}</MarkdownParser>
             </Card>
-            <Title my={"sm"}>Answers</Title>
             <Center>
               <Anchor size="sm" color="dimmed" mt={"sm"}>
                 Report abuse
               </Anchor>
             </Center>
+            <Title order={3} my={"sm"} ref={targetRef}>
+              Answers
+            </Title>
+            <div>
+              <CommentEditor post={post} mutate={mutateAnswer} />
+              {isAnswerLoading && (
+                <Center>
+                  <Loader />
+                </Center>
+              )}
+              {answers?.map((a, i) => (
+                <CommentCard
+                  key={i}
+                  comment={a}
+                  accepted={post.accepted_answer}
+                />
+              ))}
+            </div>
           </section>
           <section className="flex-none lg:relative lg:w-[300px]">
             <div className="lg:sticky lg:top-[65px]">
@@ -164,7 +205,7 @@ export default function PostDetailPage({ post, morePost }) {
               )}
               <Card shadow="md" mt={"sm"}>
                 <Text className="mb-3 font-semibold">
-                  You might want to read
+                  You might want to know
                 </Text>
                 {morePost.map((p, i) => (
                   <Box key={i} my={"sm"}>
