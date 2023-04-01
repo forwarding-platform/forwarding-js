@@ -5,13 +5,13 @@ import useSWR from "swr";
  *
  * @param {import("@supabase/supabase-js").User} user
  */
-export const useBookmark = (user) => {
+export const useLike = (user) => {
   const supabase = useSupabaseClient();
-  const { data: bookmarks, ...rest } = useSWR(
-    user ? `bookmark-${user.id}` : null,
+  const { data: likes, ...rest } = useSWR(
+    user ? `like-${user.id}` : null,
     async () => {
       const { data, error } = await supabase
-        .from("profile_bookmark")
+        .from("like_post")
         .select("post_id")
         .eq("profile_id", user.id);
       if (error) throw new Error(error.message);
@@ -19,18 +19,18 @@ export const useBookmark = (user) => {
     }
   );
   return {
-    bookmarks,
+    likes,
     ...rest,
   };
 };
 
-export const useBookmarkCount = (postId) => {
+export const useLikeCount = (postId) => {
   const supabase = useSupabaseClient();
-  const { data: bookmarkCount, ...rest } = useSWR(
-    postId ? `bookmark-count-${postId}` : null,
+  const { data: likeCount, ...rest } = useSWR(
+    postId ? `like-count-${postId}` : null,
     async () => {
       const { data, count, error } = await supabase
-        .from("profile_bookmark")
+        .from("like_post")
         .select("post_id", { count: "exact" })
         .eq("post_id", postId);
       if (error) throw new Error(error.message);
@@ -38,7 +38,7 @@ export const useBookmarkCount = (postId) => {
     }
   );
   return {
-    bookmarkCount,
+    likeCount,
     ...rest,
   };
 };

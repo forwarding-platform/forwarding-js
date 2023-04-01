@@ -1,9 +1,11 @@
 import BookmarkIcon from "@/components/BookmarkIcon";
+import HeartIcon from "@/components/HeartIcon";
 import Layout from "@/components/layouts/_layout";
 import ProfileLayout from "@/components/layouts/_layout.profile";
 import { supabase } from "@/libs/supabase";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import { useBookmark } from "@/utils/hooks/bookmark";
+import { useLike } from "@/utils/hooks/like";
 import {
   Badge,
   Box,
@@ -27,6 +29,7 @@ export default function ProfilePage({ profile }) {
   const theme = useMantineTheme();
   const user = useUser();
   const { bookmarks, mutate } = useBookmark(user);
+  const { likes, mutate: mutateLike } = useLike(user);
   if (router.isFallback)
     return (
       <Layout>
@@ -74,11 +77,14 @@ export default function ProfilePage({ profile }) {
                   </Text>
                 </Stack>
               </Group>
-              <BookmarkIcon
-                postId={post.id}
-                bookmarks={bookmarks}
-                mutate={mutate}
-              />
+              <Group>
+                <HeartIcon postId={post.id} likes={likes} mutate={mutateLike} />
+                <BookmarkIcon
+                  postId={post.id}
+                  bookmarks={bookmarks}
+                  mutate={mutate}
+                />
+              </Group>
             </Group>
             <Box my={"sm"}>
               <Link href={`/post/${post.slug}`} className=" hover:underline">

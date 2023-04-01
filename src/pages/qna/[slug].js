@@ -5,6 +5,7 @@ import HeartIcon from "@/components/HeartIcon";
 import Layout from "@/components/layouts/_layout";
 import { supabase } from "@/libs/supabase";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
+import { useAnswerCount } from "@/utils/hooks/answer";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import { useLike } from "@/utils/hooks/like";
 import {
@@ -29,6 +30,8 @@ import { useUser } from "@supabase/auth-helpers-react";
 import {
   IconArrowNarrowLeft,
   IconHeart,
+  IconMessage,
+  IconMessage2,
   IconMessageCircle,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -40,7 +43,7 @@ export default function PostDetailPage({ post, morePost }) {
   const user = useUser();
   const theme = useMantineTheme();
   const { bookmarks, mutate } = useBookmark(user);
-  const { likes, mutate: likeMutate } = useLike(user);
+  const { answerCount } = useAnswerCount(post.id);
   return (
     <Layout>
       <Container size={"xl"}>
@@ -113,7 +116,15 @@ export default function PostDetailPage({ post, morePost }) {
                 ))}
               </div>
               <Group>
-                <HeartIcon postId={post.id} likes={likes} mutate={likeMutate} />
+                <Tooltip label="Answer">
+                  <UnstyledButton component={Group} spacing={5}>
+                    <Text>{answerCount ?? "0"}</Text>
+                    <IconMessageCircle
+                      strokeWidth={1.5}
+                      color={theme.fn.primaryColor()}
+                    />
+                  </UnstyledButton>
+                </Tooltip>
                 <BookmarkIcon
                   postId={post.id}
                   bookmarks={bookmarks}
@@ -124,6 +135,7 @@ export default function PostDetailPage({ post, morePost }) {
             <Card shadow="lg" radius="md">
               <MarkdownParser>{post.content}</MarkdownParser>
             </Card>
+            <Title my={"sm"}>Answers</Title>
             <Center>
               <Anchor size="sm" color="dimmed" mt={"sm"}>
                 Report abuse
@@ -178,7 +190,7 @@ export async function getStaticPaths() {
   const { data: path } = await supabase
     .from("post")
     .select("slug")
-    .eq("type", "blog");
+    .eq("type", "question");
   const paths = path.map((p) => ({ params: { slug: p.slug.toString() } }));
   return { paths, fallback: "blocking" };
 }
@@ -198,7 +210,7 @@ export async function getStaticProps(ctx) {
       .from("post")
       .select("title,slug")
       .eq("profile_id", data.profile.id)
-      .eq("type", "blog")
+      .eq("type", "question")
       .neq("slug", params.slug)
       .order("created_at", { ascending: false })
       .limit(3);

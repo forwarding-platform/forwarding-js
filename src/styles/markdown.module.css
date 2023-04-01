@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 .markdownStyle {
-  font-family: "Poppins";
-}
+  font-family: 'Montserrat',sans-serif;
+} */
 
 .markdownStyle img {
   max-width: 100%;
@@ -10,9 +11,5 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
-
-.markdownStyle table, .markdownStyle td {
-  border: 1px solid gray;
-  border-collapse: collapse;
+  margin-bottom: 10px;
 }

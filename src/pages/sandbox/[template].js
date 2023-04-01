@@ -1,20 +1,21 @@
-import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import Layout from "@/components/layouts/_layout";
+import { templateList } from "@/constants/sandpackTemplate";
+import { Sandpack } from "@codesandbox/sandpack-react";
 import {
-  Center,
-  Loader,
-  Text,
   Button,
+  Center,
+  Container,
+  Loader,
+  Paper,
   Select,
   Stack,
+  Text,
   Title,
-  Container,
-  Paper,
 } from "@mantine/core";
-import Layout from "@/components/layouts/_layout";
-import Link from "next/link";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { templateList } from "@/constants/sandpackTemplate";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useState } from "react";
 
 const CustomSandPack = dynamic(() => import("@/components/CustomSandPack"), {
   ssr: false,

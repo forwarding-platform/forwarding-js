@@ -1,6 +1,5 @@
-import { useBookmark, useBookmarkCount } from "@/utils/hooks/bookmark";
+import { useLikeCount } from "@/utils/hooks/like";
 import {
-  ActionIcon,
   Group,
   Text,
   Tooltip,
@@ -9,38 +8,38 @@ import {
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { IconBookmark } from "@tabler/icons-react";
+import { IconHeart } from "@tabler/icons-react";
+import React from "react";
 
-export default function BookmarkIcon({ postId, bookmarks, mutate }) {
+export default function HeartIcon({ postId, likes, mutate }) {
   const user = useUser();
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
-  const bookmarked = bookmarks?.includes(postId);
-  const { bookmarkCount, mutate: countMutate } = useBookmarkCount(postId);
-  const handleBookmark = async () => {
+  const { likeCount, mutate: likeCountMutate } = useLikeCount(postId);
+  const liked = likes?.includes(postId);
+  const handleLike = async () => {
     if (!user) {
-      console.log("no");
       return modals.openContextModal({
         modal: "requireAuth",
         title: "Authentication Required",
       });
     } else {
-      if (bookmarks) {
-        if (bookmarked) {
+      if (likes) {
+        if (liked) {
           const { data } = await supabase
-            .from("profile_bookmark")
+            .from("like_post")
             .delete({ count: 1 })
             .eq("profile_id", user.id)
             .eq("post_id", postId)
             .select("post_id")
             .single();
           if (data) {
-            mutate([...bookmarks.filter((b) => b !== data.post_id)]);
-            countMutate(bookmarkCount - 1);
+            mutate([...likes.filter((b) => b !== data.post_id)]);
+            likeCountMutate(likeCount - 1);
           }
         } else {
           const { data } = await supabase
-            .from("profile_bookmark")
+            .from("like_post")
             .insert({
               profile_id: user.id,
               post_id: postId,
@@ -48,22 +47,21 @@ export default function BookmarkIcon({ postId, bookmarks, mutate }) {
             .select("post_id")
             .single();
           if (data) {
-            mutate([...bookmarks, data.post_id]);
-            countMutate(bookmarkCount + 1);
+            mutate([...likes, data.post_id]);
+            likeCountMutate(likeCount + 1);
           }
         }
       }
     }
   };
-
   return (
-    <Tooltip label="Bookmark">
-      <UnstyledButton component={Group} spacing={5} onClick={handleBookmark}>
-        <Text>{bookmarkCount ?? 0}</Text>
-        <IconBookmark
-          strokeWidth={1.5}
-          fill={bookmarked ? theme.fn.primaryColor() : "transparent"}
+    <Tooltip label="Like">
+      <UnstyledButton component={Group} spacing={5} onClick={handleLike}>
+        <Text>{likeCount ?? 0}</Text>
+        <IconHeart
           color={theme.fn.primaryColor()}
+          strokeWidth={1.5}
+          fill={liked ? theme.fn.primaryColor() : "transparent"}
         />
       </UnstyledButton>
     </Tooltip>

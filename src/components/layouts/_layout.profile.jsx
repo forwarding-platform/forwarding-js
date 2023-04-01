@@ -258,9 +258,9 @@ export default function ProfileLayout({ username, children }) {
           </div>
         </Paper>
         <Container size="lg" mt="lg">
-          <div className="flex w-full flex-col gap-3 lg:flex-row lg:gap-5">
+          <div className="flex w-full flex-col gap-3 lg:relative lg:flex-row lg:gap-5">
             {/* Side sections */}
-            <section className="flex basis-2/5 flex-col gap-3 lg:sticky lg:bottom-0 lg:gap-5 lg:self-end">
+            <section className="flex basis-2/5 flex-col gap-3 lg:sticky lg:top-[65px] lg:gap-5 lg:self-start">
               <Paper className="flex flex-col gap-2 rounded-lg border p-4 shadow">
                 <Title order={3}>Intro</Title>
                 {profile.introduction && (

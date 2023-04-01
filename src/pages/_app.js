@@ -1,13 +1,11 @@
 import Providers from "@/components/app/Providers";
 import { RouterTransition } from "@/components/app/RouterTransition";
+import TopTopButton from "@/components/common/TopTopButton";
 import "@/styles/globals.css";
+import { Montserrat } from "next/font/google";
 import Head from "next/head";
-import { Poppins } from "next/font/google";
 
-const font = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
+const font = Montserrat({ subsets: ["latin", "vietnamese"] });
 
 export default function App({ Component, pageProps }) {
   return (
@@ -25,7 +23,8 @@ export default function App({ Component, pageProps }) {
       `}</style>
       <Providers pageProps={pageProps}>
         <RouterTransition />
-        <div className={font.className}>
+        <TopTopButton />
+        <div className={`${font.className} scroll-smooth`}>
           <Component {...pageProps} />
         </div>
       </Providers>

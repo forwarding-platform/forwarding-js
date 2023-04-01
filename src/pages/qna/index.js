@@ -1,52 +1,34 @@
-import BookmarkIcon from "@/components/BookmarkIcon";
-import TopTopButton from "@/components/common/TopTopButton";
 import Layout from "@/components/layouts/_layout";
+import PostCard from "@/components/PostCard";
 import { supabase } from "@/libs/supabase";
-import { getTimeElapsed } from "@/utils/getTimeElapsed";
-import { useBookmark } from "@/utils/hooks/bookmark";
 import { useArticleInfiniteLoading } from "@/utils/hooks/post";
 import {
-  Badge,
-  Box,
-  Card,
+  ActionIcon,
+  Button,
   Center,
+  Chip,
   Container,
   Group,
+  Loader,
+  MultiSelect,
+  ScrollArea,
   Stack,
   Text,
   TextInput,
-  Title,
-  UnstyledButton,
-  Loader,
-  Button,
-  Anchor,
-  ThemeIcon,
-  ActionIcon,
-  Select,
-  ScrollArea,
-  MultiSelect,
-  Chip,
 } from "@mantine/core";
-import { useUser } from "@supabase/auth-helpers-react";
 import { IconRefresh } from "@tabler/icons-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function QnAPage({ tags }) {
   const [search, setSearch] = useState("");
   const [tag, setTag] = useState([]);
   const { data, mutate, size, setSize, isLoading, isValidating } =
-    useArticleInfiniteLoading("blog", search, tag);
+    useArticleInfiniteLoading("question", search, tag);
   useEffect(() => {
     if (tag.length > 3) {
       setTag(tag.splice(1));
     }
   }, [tag]);
-  const user = useUser();
-  const router = useRouter();
-  const { bookmarks, mutate: mutateBookmark } = useBookmark(user);
   const questions = data ? [].concat(...data) : [];
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
@@ -56,7 +38,6 @@ export default function QnAPage({ tags }) {
   return (
     <Layout>
       <Container size={"xl"}>
-        <TopTopButton />
         <div className="flex w-full gap-2">
           <section className="grow">
             <TextInput
@@ -104,68 +85,69 @@ export default function QnAPage({ tags }) {
                     <Loader />
                   ) : null}
                   {questions.map((post, index) => (
-                    <Card key={index} shadow="md" radius="md" mb="sm">
-                      <Group position="apart">
-                        <Group>
-                          <UnstyledButton
-                            onClick={() =>
-                              router.push(`/user/${post.profile.username}`)
-                            }
-                            style={{ border: "1px solid", borderRadius: "50%" }}
-                          >
-                            <Image
-                              src={
-                                post.profile.avatar_url
-                                  ? post.profile.avatar_url.includes(
-                                      "googleusercontent"
-                                    )
-                                    ? post.profile.avatar_url
-                                    : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
-                                  : `https://robohash.org/${post.profile.email}`
-                              }
-                              alt="svt"
-                              width={40}
-                              height={40}
-                              className="rounded-full"
-                            />
-                          </UnstyledButton>
-                          <Stack justify="center" spacing={0}>
-                            <Text
-                              className="cursor-pointer font-medium hover:underline"
-                              size={"sm"}
-                              onClick={() =>
-                                router.push(`/user/${post.profile.username}`)
-                              }
-                            >
-                              {post.profile.name}
-                            </Text>
-                            <Text size="xs" color="dimmed">
-                              {getTimeElapsed(post.created_at)}
-                            </Text>
-                          </Stack>
-                        </Group>
-                        <BookmarkIcon
-                          postId={post.id}
-                          bookmarks={bookmarks}
-                          mutate={mutateBookmark}
-                        />
-                      </Group>
-                      <Box my={"sm"}>
-                        <Link
-                          href={`/post/${post.slug}`}
-                          className=" hover:underline"
-                        >
-                          <Title order={3}>{post.title}</Title>
-                        </Link>
-                      </Box>
-                      <Group>
-                        {post.post_tag.map((tag, index) => (
-                          <Badge variant="dot" key={index}>
-                            {tag.tag.name}
-                          </Badge>
-                        ))}
-                      </Group>
-                    </Card>
+                    // <Card key={index} shadow="md" radius="md" mb="sm">
+                    //   <Group position="apart">
+                    //     <Group>
+                    //       <UnstyledButton
+                    //         onClick={() =>
+                    //           router.push(`/user/${post.profile.username}`)
+                    //         }
+                    //         style={{ border: "1px solid", borderRadius: "50%" }}
+                    //       >
+                    //         <Image
+                    //           src={
+                    //             post.profile.avatar_url
+                    //               ? post.profile.avatar_url.includes(
+                    //                   "googleusercontent"
+                    //                 )
+                    //                 ? post.profile.avatar_url
+                    //                 : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                    //               : `https://robohash.org/${post.profile.email}`
+                    //           }
+                    //           alt="svt"
+                    //           width={40}
+                    //           height={40}
+                    //           className="rounded-full"
+                    //         />
+                    //       </UnstyledButton>
+                    //       <Stack justify="center" spacing={0}>
+                    //         <Text
+                    //           className="cursor-pointer font-medium hover:underline"
+                    //           size={"sm"}
+                    //           onClick={() =>
+                    //             router.push(`/user/${post.profile.username}`)
+                    //           }
+                    //         >
+                    //           {post.profile.name}
+                    //         </Text>
+                    //         <Text size="xs" color="dimmed">
+                    //           {getTimeElapsed(post.created_at)}
+                    //         </Text>
+                    //       </Stack>
+                    //     </Group>
+                    //     <BookmarkIcon
+                    //       postId={post.id}
+                    //       bookmarks={bookmarks}
+                    //       mutate={mutateBookmark}
+                    //     />
+                    //   </Group>
+                    //   <Box my={"sm"}>
+                    //     <Link
+                    //       href={`/post/${post.slug}`}
+                    //       className=" hover:underline"
+                    //     >
+                    //       <Title order={3}>{post.title}</Title>
+                    //     </Link>
+                    //   </Box>
+                    //   <Group>
+                    //     {post.post_tag.map((tag, index) => (
+                    //       <Badge variant="dot" key={index}>
+                    //         {tag.tag.name}
+                    //       </Badge>
+                    //     ))}
+                    //   </Group>
+                    // </Card>
+                    <PostCard key={index} post={post} />
                   ))}
                 </Stack>
                 <Center>
@@ -185,20 +167,23 @@ export default function QnAPage({ tags }) {
               </>
             )}
           </section>
-          <ScrollArea className="hidden pt-10 pl-10 lg:block">
-            <Chip.Group multiple value={tag} onChange={setTag}>
-              {tags.map((t) => (
-                <Chip
-                  key={t.id}
-                  value={t.id}
-                  mt="sm"
-                  checked={tag.includes(t.id.toString())}
-                >
-                  {t.name}
-                </Chip>
-              ))}
-            </Chip.Group>
-          </ScrollArea>
+          <section className="hidden pl-5 lg:block">
+            <Text className="font-bold">Filter by tags</Text>
+            <ScrollArea className="">
+              <Chip.Group multiple value={tag} onChange={setTag}>
+                {tags.map((t) => (
+                  <Chip
+                    key={t.id}
+                    value={t.id}
+                    mt="sm"
+                    checked={tag.includes(t.id.toString())}
+                  >
+                    {t.name}
+                  </Chip>
+                ))}
+              </Chip.Group>
+            </ScrollArea>
+          </section>
         </div>
       </Container>
     </Layout>

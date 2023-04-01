@@ -159,7 +159,6 @@ export default function EditorPage({ tags }) {
           <Title>New Post Editor</Title>
         </Group>
         <Divider mb="md" />
-        <TopTopButton />
         <form
           onSubmit={handleFormSubmit}
           className="relative flex flex-col gap-1"

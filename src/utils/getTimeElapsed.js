@@ -20,6 +20,6 @@ export function getTimeElapsed(createdDate) {
       Math.floor(duration.asDays()) === 1 ? "" : "s"
     } ago`;
   } else {
-    return createdDate.format("YYYY-MM-DD");
+    return dayjs(createdDate).format("MMM DD, YYYY");
   }
 }
