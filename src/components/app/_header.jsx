@@ -32,6 +32,7 @@ import {
   IconChevronDown,
   IconLogout,
   IconSettings2,
+  IconShieldLock,
   IconUser,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -41,6 +42,7 @@ import { useProfile } from "@/utils/hooks/profile";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const useStyles = createStyles((theme) => ({
   link: {
@@ -238,24 +240,26 @@ export function AppHeader() {
                   {links}
                 </SimpleGrid>
 
-                <div className={classes.dropdownFooter}>
-                  <Group position="apart">
-                    <div>
-                      <Text fw={500} fz="sm">
+                {!user && (
+                  <div className={classes.dropdownFooter}>
+                    <Group position="apart">
+                      <div>
+                        <Text fw={500} fz="sm">
+                          Get started
+                        </Text>
+                        <Text size="xs" color="dimmed">
+                          Sign up to utilize Apps in no time
+                        </Text>
+                      </div>
+                      <Button
+                        variant="default"
+                        onClick={() => router.push("/auth/signin")}
+                      >
                         Get started
-                      </Text>
-                      <Text size="xs" color="dimmed">
-                        Sign up to utilize Apps in no time
-                      </Text>
-                    </div>
-                    <Button
-                      variant="default"
-                      onClick={() => router.push("/auth/signin")}
-                    >
-                      Get started
-                    </Button>
-                  </Group>
-                </div>
+                      </Button>
+                    </Group>
+                  </div>
+                )}
               </HoverCard.Dropdown>
             </HoverCard>
           </Group>
@@ -296,9 +300,6 @@ export function AppHeader() {
                   >
                     Profile
                   </Menu.Item>
-                  <Menu.Item py="sm" icon={<IconSettings2 size={14} />}>
-                    Settings
-                  </Menu.Item>
                   <Menu.Divider />
                   <Menu.Item
                     color="red"
@@ -306,6 +307,7 @@ export function AppHeader() {
                     icon={<IconLogout size={14} />}
                     onClick={async () => {
                       const { error } = await supabase.auth.signOut();
+                      if (!error) router.reload();
                       // mutate();
                     }}
                   >

@@ -45,7 +45,7 @@ export default function Providers({ children, pageProps }) {
           }}
         >
           <ModalsProvider modals={{ requireAuth: RequireAuth }}>
-            <Notifications />
+            <Notifications position="top-right" />
             {children}
           </ModalsProvider>
         </MantineProvider>
