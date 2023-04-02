@@ -1,19 +1,7 @@
 import Layout from "@/components/layouts/_layout";
 import { supabaseAdmin } from "@/libs/adminSupabase";
-import { supabase } from "@/libs/supabase";
-import {
-  Anchor,
-  Button,
-  Card,
-  Container,
-  Group,
-  Text,
-  Title,
-  UnstyledButton,
-  useMantineTheme,
-} from "@mantine/core";
+import { Anchor, Card, Container, Text, Title } from "@mantine/core";
 import Link from "next/link";
-import React from "react";
 
 export default function PracticePage({ practices }) {
   return (

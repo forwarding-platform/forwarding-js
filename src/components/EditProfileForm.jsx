@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { DateInput, DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { closeModal } from "@mantine/modals";
+import { closeModal, modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconAlertCircle, IconX } from "@tabler/icons-react";
 import { countries } from "countries-list";
@@ -232,6 +232,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
               <Anchor
                 align="center"
                 variant="link"
+                size="sm"
                 onClick={() => form.insertListItem("work", "")}
                 hidden={workInputs.length >= 5}
               >
@@ -242,6 +243,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
             <Anchor
               variant="link"
               align="center"
+              size="sm"
               onClick={() => form.insertListItem("work", "")}
             >
               Add work
@@ -254,6 +256,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
               <Anchor
                 align="center"
                 variant="link"
+                size="sm"
                 onClick={() => form.insertListItem("education", "")}
                 hidden={educationInputs.length >= 5}
               >
@@ -264,6 +267,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
             <Anchor
               variant="link"
               align="center"
+              size="sm"
               onClick={() => form.insertListItem("education", "")}
             >
               Add education
@@ -275,6 +279,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
               {linkInputs}
               <Anchor
                 align="center"
+                size="sm"
                 variant="link"
                 onClick={() => form.insertListItem("link", "")}
                 hidden={linkInputs.length >= 5}
@@ -286,6 +291,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
             <Anchor
               variant="link"
               align="center"
+              size="sm"
               onClick={() => form.insertListItem("link", "")}
             >
               Add link
@@ -306,7 +312,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
             <Button
               w="fit-content"
               variant="outline"
-              onClick={() => closeModal("edit-profile")}
+              onClick={() => modals.closeAll()}
             >
               {skipBtn ? "Skip for now" : "Cancel"}
             </Button>
