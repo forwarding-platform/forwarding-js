@@ -7,8 +7,18 @@ import { useUser } from "@supabase/auth-helpers-react";
 
 export default function Index({ post }) {
   return (
-    <Layout>
-      <Container></Container>
-    </Layout>
+    <>
+      <Container>Index</Container>
+    </>
   );
+}
+
+Index.getLayout = (page) => <Layout>{page}</Layout>;
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      metaTitle: "Home",
+    },
+  };
 }

@@ -17,7 +17,7 @@ import React from "react";
 
 export default function PracticePage({ practices }) {
   return (
-    <Layout>
+    <>
       <Container>
         <Title my="md">Practices</Title>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -59,9 +59,13 @@ export default function PracticePage({ practices }) {
             ))}
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+PracticePage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
 
 export async function getStaticProps() {
   const { data, error } = await supabaseAdmin
@@ -70,6 +74,7 @@ export async function getStaticProps() {
   return {
     props: {
       practices: data,
+      metaTitle: "Practices",
     },
   };
 }

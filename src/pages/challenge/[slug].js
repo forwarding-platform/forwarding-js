@@ -146,7 +146,7 @@ export default function ChallengePage({ challenge }) {
   };
 
   return (
-    <Layout>
+    <>
       <Container size="xl">
         <Breadcrumbs
           my="md"
@@ -296,9 +296,13 @@ export default function ChallengePage({ challenge }) {
                 ))}
         </Stack>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+ChallengePage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
 
 export async function getStaticPaths() {
   const { data } = await supabaseAdmin
@@ -324,6 +328,7 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       challenge: data,
+      metaTitle: data?.title || "Challenge",
     },
   };
 }

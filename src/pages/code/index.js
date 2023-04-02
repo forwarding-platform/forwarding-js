@@ -69,7 +69,7 @@ export default function CodePage() {
   useEffect(() => result && scrollIntoView(), [result, scrollIntoView]);
 
   return (
-    <Layout>
+    <>
       <Container className="flex flex-col items-center" size="xl">
         <Title my="md">Code Runner</Title>
         <Group grow className="my-2 self-end">
@@ -159,6 +159,18 @@ export default function CodePage() {
           </Paper>
         </Stack>
       </Container>
-    </Layout>
+    </>
   );
+}
+
+CodePage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      metaTitle: "Code Runner",
+    },
+  };
 }

@@ -248,7 +248,12 @@ export function AppHeader() {
                         Sign up to utilize Apps in no time
                       </Text>
                     </div>
-                    <Button variant="default">Get started</Button>
+                    <Button
+                      variant="default"
+                      onClick={() => router.push("/auth/signin")}
+                    >
+                      Get started
+                    </Button>
                   </Group>
                 </div>
               </HoverCard.Dropdown>

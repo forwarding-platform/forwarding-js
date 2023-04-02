@@ -19,7 +19,7 @@ import Link from "next/link";
 
 export default function PracticeGroup({ challenges, title }) {
   return (
-    <Layout>
+    <>
       <Container size="lg">
         <Title my="md">{title}</Title>
         {challenges.length == 0 && <Text>There is no challenges yet.</Text>}
@@ -51,9 +51,11 @@ export default function PracticeGroup({ challenges, title }) {
           </section>
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+PracticeGroup.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticPaths() {
   const { data: path, error } = await supabase.from("practice").select("id");
@@ -86,6 +88,7 @@ export async function getStaticProps(ctx) {
     props: {
       challenges: challenge,
       title: title.title,
+      metaTitle: title.title,
     },
   };
 }

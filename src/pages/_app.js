@@ -8,6 +8,7 @@ import Head from "next/head";
 const font = Montserrat({ subsets: ["latin", "vietnamese"] });
 
 export default function App({ Component, pageProps }) {
+  const getLayout = Component.getLayout || ((page) => page);
   return (
     <>
       <Head>
@@ -25,7 +26,7 @@ export default function App({ Component, pageProps }) {
         <RouterTransition />
         <TopTopButton />
         <div className={`${font.className} scroll-smooth`}>
-          <Component {...pageProps} />
+          {getLayout(<Component {...pageProps} />)}
         </div>
       </Providers>
     </>

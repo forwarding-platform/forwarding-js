@@ -25,7 +25,7 @@ export default function SandboxPage() {
     [searchValue]
   );
   return (
-    <Layout>
+    <>
       <Container>
         <div className="flex flex-col">
           <Title my="md">Nodejs Sandbox</Title>
@@ -66,8 +66,18 @@ export default function SandboxPage() {
           )}
         </div>
       </Container>
-    </Layout>
+    </>
   );
+}
+
+SandboxPage.getLayout = (page) => <Layout>{page}</Layout>;
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      metaTitle: "Sandbox",
+    },
+  };
 }
 
 const useStyle = createStyles((theme) => ({

@@ -29,7 +29,7 @@ const CustomSandPack = dynamic(() => import("@/components/CustomSandPack"), {
 export default function TemplatePage({ template }) {
   const [theme, setTheme] = useState("dark");
   return (
-    <Layout>
+    <>
       <Container size="xl">
         <Title align="center" my="md">
           {template.name} Sandbox
@@ -62,9 +62,11 @@ export default function TemplatePage({ template }) {
           <CustomSandPack href={template.href} theme={theme} />
         </Paper>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+TemplatePage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticPaths() {
   const paths = templateList.map((l) => ({ params: { template: l.href } }));
@@ -77,6 +79,7 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       template: template,
+      metaTitle: template?.name + " Sandbox" || "Sandbox",
     },
   };
 }

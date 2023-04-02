@@ -1,5 +1,6 @@
 import { AppShell, Box, useMantineTheme } from "@mantine/core";
 import { useSession } from "@supabase/auth-helpers-react";
+import Head from "next/head";
 import { useEffect } from "react";
 import ToggleScheme from "../app/ToggleScheme";
 import AppFooter from "../app/_footer";
@@ -9,6 +10,13 @@ export default function Layout({ children }) {
   const theme = useMantineTheme();
   return (
     <>
+      <Head>
+        <title>
+          {children.props?.metaTitle
+            ? children.props.metaTitle + " | Forwarding"
+            : "Forwarding"}
+        </title>
+      </Head>
       <AppShell
         header={<AppHeader />}
         styles={{

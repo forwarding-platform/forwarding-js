@@ -4,8 +4,18 @@ import React from "react";
 
 export default function QuizPage() {
   return (
-    <Layout>
+    <>
       <Container>gfdf</Container>
-    </Layout>
+    </>
   );
+}
+
+QuizPage.getLayout = (page) => <Layout>{page}</Layout>;
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      metaTitle: "All Quizzes",
+    },
+  };
 }

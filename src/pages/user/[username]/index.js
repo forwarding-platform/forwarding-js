@@ -20,6 +20,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useUser } from "@supabase/auth-helpers-react";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -32,16 +33,16 @@ export default function ProfilePage({ profile }) {
   const { likes, mutate: mutateLike } = useLike(user);
   if (router.isFallback)
     return (
-      <Layout>
+      <>
         <Center h={"100vh"} component={Stack}>
           <Loader />
         </Center>
-      </Layout>
+      </>
     );
   return (
     <ProfileLayout username={profile.username}>
       {/* <pre>{JSON.stringify(profile.post, null, 2)}</pre> */}
-      {profile.post.length !== 0 &&
+      {profile.post.length !== 0 ? (
         profile.post.map((post, index) => (
           <Card key={index} shadow="md" radius="md" mb="sm">
             <Group position="apart">
@@ -99,10 +100,15 @@ export default function ProfilePage({ profile }) {
               ))}
             </Group>
           </Card>
-        ))}
+        ))
+      ) : (
+        <Center> No posts yet</Center>
+      )}
     </ProfileLayout>
   );
 }
+
+ProfilePage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticPaths() {
   const { data: path } = await supabase.from("profile").select("username");

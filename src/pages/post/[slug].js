@@ -42,7 +42,7 @@ export default function PostDetailPage({ post, morePost }) {
   const { bookmarks, mutate } = useBookmark(user);
   const { likes, mutate: likeMutate } = useLike(user);
   return (
-    <Layout>
+    <>
       <Container size={"xl"}>
         <Button
           variant="subtle"
@@ -170,9 +170,13 @@ export default function PostDetailPage({ post, morePost }) {
           </section>
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+PostDetailPage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
 
 export async function getStaticPaths() {
   const { data: path } = await supabase
@@ -212,6 +216,7 @@ export async function getStaticProps(ctx) {
       props: {
         post: data,
         morePost: morePost,
+        metaTitle: data?.title || "Post",
       },
     };
   }

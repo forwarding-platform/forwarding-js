@@ -36,7 +36,7 @@ export default function QnAPage({ tags }) {
   const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < 10);
   const isRefreshing = isValidating && data && data.length === size;
   return (
-    <Layout>
+    <>
       <Container size={"xl"}>
         <div className="flex w-full gap-2">
           <section className="grow">
@@ -85,68 +85,6 @@ export default function QnAPage({ tags }) {
                     <Loader />
                   ) : null}
                   {questions.map((post, index) => (
-                    // <Card key={index} shadow="md" radius="md" mb="sm">
-                    //   <Group position="apart">
-                    //     <Group>
-                    //       <UnstyledButton
-                    //         onClick={() =>
-                    //           router.push(`/user/${post.profile.username}`)
-                    //         }
-                    //         style={{ border: "1px solid", borderRadius: "50%" }}
-                    //       >
-                    //         <Image
-                    //           src={
-                    //             post.profile.avatar_url
-                    //               ? post.profile.avatar_url.includes(
-                    //                   "googleusercontent"
-                    //                 )
-                    //                 ? post.profile.avatar_url
-                    //                 : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
-                    //               : `https://robohash.org/${post.profile.email}`
-                    //           }
-                    //           alt="svt"
-                    //           width={40}
-                    //           height={40}
-                    //           className="rounded-full"
-                    //         />
-                    //       </UnstyledButton>
-                    //       <Stack justify="center" spacing={0}>
-                    //         <Text
-                    //           className="cursor-pointer font-medium hover:underline"
-                    //           size={"sm"}
-                    //           onClick={() =>
-                    //             router.push(`/user/${post.profile.username}`)
-                    //           }
-                    //         >
-                    //           {post.profile.name}
-                    //         </Text>
-                    //         <Text size="xs" color="dimmed">
-                    //           {getTimeElapsed(post.created_at)}
-                    //         </Text>
-                    //       </Stack>
-                    //     </Group>
-                    //     <BookmarkIcon
-                    //       postId={post.id}
-                    //       bookmarks={bookmarks}
-                    //       mutate={mutateBookmark}
-                    //     />
-                    //   </Group>
-                    //   <Box my={"sm"}>
-                    //     <Link
-                    //       href={`/post/${post.slug}`}
-                    //       className=" hover:underline"
-                    //     >
-                    //       <Title order={3}>{post.title}</Title>
-                    //     </Link>
-                    //   </Box>
-                    //   <Group>
-                    //     {post.post_tag.map((tag, index) => (
-                    //       <Badge variant="dot" key={index}>
-                    //         {tag.tag.name}
-                    //       </Badge>
-                    //     ))}
-                    //   </Group>
-                    // </Card>
                     <PostCard key={index} post={post} />
                   ))}
                 </Stack>
@@ -186,9 +124,11 @@ export default function QnAPage({ tags }) {
           </section>
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+QnAPage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticProps(ctx) {
   const { data, error } = await supabase.from("tag").select("*");
@@ -196,6 +136,7 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       tags: data,
+      metaTitle: "All Questions",
     },
   };
 }

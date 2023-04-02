@@ -40,7 +40,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-export default function PostDetailPage({ post, morePost }) {
+export default function QADetailPage({ post, morePost }) {
   const router = useRouter();
   const user = useUser();
   const theme = useMantineTheme();
@@ -65,7 +65,7 @@ export default function PostDetailPage({ post, morePost }) {
     }
   }
   return (
-    <Layout>
+    <>
       <Container size={"xl"}>
         <Button
           variant="subtle"
@@ -223,9 +223,11 @@ export default function PostDetailPage({ post, morePost }) {
           </section>
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+QADetailPage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticPaths() {
   const { data: path } = await supabase
@@ -265,6 +267,7 @@ export async function getStaticProps(ctx) {
       props: {
         post: data,
         morePost: morePost,
+        metaTitle: data?.title || "Q & A",
       },
     };
   }

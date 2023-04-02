@@ -150,17 +150,18 @@ export default function EditorPage({ tags }) {
     }
   });
   return (
-    <Layout>
+    <>
       <Container>
+        <Button
+          variant="subtle"
+          radius="md"
+          mb="sm"
+          onClick={() => router.back()}
+          leftIcon={<IconArrowNarrowLeft strokeWidth={1.5} />}
+        >
+          Back
+        </Button>
         <Group>
-          <ActionIcon
-            variant="light"
-            size="lg"
-            radius="xl"
-            onClick={() => router.back()}
-          >
-            <IconArrowNarrowLeft strokeWidth={1.5} />
-          </ActionIcon>
           <Title>New Question Editor</Title>
         </Group>
         <Divider mb="md" />
@@ -281,9 +282,13 @@ export default function EditorPage({ tags }) {
           </div>
         </form>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+EditorPage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
 
 export async function getStaticProps(ctx) {
   const { data, error } = await supabase.from("tag").select("*");
@@ -291,6 +296,7 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       tags: data,
+      metaTitle: "New Question",
     },
   };
 }

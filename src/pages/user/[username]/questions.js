@@ -22,23 +22,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-export default function ProfilePage({ profile }) {
+export default function QuestionPage({ profile }) {
   const router = useRouter();
   const theme = useMantineTheme();
   const user = useUser();
   const { bookmarks, mutate } = useBookmark(user);
   if (router.isFallback)
     return (
-      <Layout>
+      <>
         <Center h={"100vh"} component={Stack}>
           <Loader />
         </Center>
-      </Layout>
+      </>
     );
   return (
     <ProfileLayout username={profile.username}>
       {/* <pre>{JSON.stringify(profile.post, null, 2)}</pre> */}
-      {profile.post.length !== 0 &&
+      {profile.post.length !== 0 ? (
         profile.post.map((post, index) => (
           <Card key={index} shadow="md" radius="md" mb="sm">
             <Group position="apart">
@@ -93,10 +93,15 @@ export default function ProfilePage({ profile }) {
               ))}
             </Group>
           </Card>
-        ))}
+        ))
+      ) : (
+        <Center> No questions yet</Center>
+      )}
     </ProfileLayout>
   );
 }
+
+QuestionPage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export async function getStaticPaths() {
   const { data: path } = await supabase.from("profile").select("username");

@@ -41,6 +41,7 @@ import { useRouter } from "next/router";
 import EditProfileForm from "../EditProfileForm";
 import UploadImage from "../UploadImage";
 import { mutate as externalMutate } from "swr";
+import Head from "next/head";
 
 export default function ProfileLayout({ username, children }) {
   const { profile, mutate } = useProfile("username", username);
@@ -59,6 +60,12 @@ export default function ProfileLayout({ username, children }) {
       label: "Questions",
     },
   ];
+  if (user) {
+    tabLinks.push({
+      href: `/user/${username}/bookmarked`,
+      label: "Bookmarked",
+    });
+  }
   const handleChangeCoverPhoto = async (file) => {
     if (user) {
       await supabase.storage.from("covers").remove([profile.cover_url]);
@@ -125,15 +132,18 @@ export default function ProfileLayout({ username, children }) {
   };
   if (!profile)
     return (
-      <Layout>
+      <>
         <Center h={"100vh"} component={Stack}>
           <Loader />
         </Center>
-      </Layout>
+      </>
     );
   if (profile)
     return (
-      <Layout>
+      <>
+        <Head>
+          <title>{profile.name} | Profile</title>
+        </Head>
         {/* Cover photo section */}
         <Paper component={Container} fluid shadow="md">
           <div className="relative mx-auto h-[25vw] max-h-[45vh] rounded-bl-lg rounded-br-lg lg:w-4/5">
@@ -366,6 +376,6 @@ export default function ProfileLayout({ username, children }) {
             </section>
           </div>
         </Container>
-      </Layout>
+      </>
     );
 }

@@ -36,7 +36,7 @@ export default function PostPage({ tags }) {
   const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < 10);
   const isRefreshing = isValidating && data && data.length === size;
   return (
-    <Layout>
+    <>
       <Container size={"xl"}>
         <div className="flex w-full gap-2">
           <section className="grow">
@@ -185,9 +185,13 @@ export default function PostPage({ tags }) {
           </section>
         </div>
       </Container>
-    </Layout>
+    </>
   );
 }
+
+PostPage.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
 
 export async function getStaticProps(ctx) {
   const { data, error } = await supabase.from("tag").select("*");
@@ -195,6 +199,7 @@ export async function getStaticProps(ctx) {
   return {
     props: {
       tags: data,
+      metaTitle: "All Posts",
     },
   };
 }
