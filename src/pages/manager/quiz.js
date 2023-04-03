@@ -5,6 +5,8 @@ import {
   Box,
   Button,
   Group,
+  NativeSelect,
+  Select,
   Text,
   TextInput,
   Title,
@@ -15,12 +17,20 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconEdit,
+  IconGlobe,
+  IconLock,
+  IconTrash,
+  IconWorldUpload,
+  IconX,
+} from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
 import React, { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 
-export default function PracticeManage() {
+export default function QuizManage() {
   const supabase = useSupabaseClient();
   const user = useUser();
   const theme = useMantineTheme();
@@ -31,7 +41,7 @@ export default function PracticeManage() {
         error: validationErrors[cell.id],
         onBlur: (event) => {
           const isValid =
-            cell.column.id === "title" && validateRequired(event.target.value);
+            cell.column.id === "name" && validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
@@ -54,9 +64,9 @@ export default function PracticeManage() {
     user ? "practice" : null,
     async () => {
       const { data, error } = await supabase
-        .rpc("get_practice_count_challenge")
-        .select("*")
-        .order("title");
+        .from("quiz")
+        .select("*, profile(id, email)")
+        .order("created_at", { ascending: false });
       if (error) {
         console.log(error);
         throw new Error(error.message);
@@ -67,16 +77,36 @@ export default function PracticeManage() {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "title",
-        header: "Title",
+        accessorKey: "name",
+        header: "Name",
         mantineEditTextInputProps: ({ cell }) => ({
           ...getCommonEditTextInputProps(cell),
         }),
       },
       {
-        accessorKey: "challenge_count",
-        header: "Challenges",
-        mantineEditTextInputProps: { disabled: true },
+        accessorKey: "description",
+        header: "Description",
+        Cell: ({ cell }) =>
+          cell.getValue("description") ? (
+            <Text lineClamp={2}>{cell.getValue("description")}</Text>
+          ) : (
+            <Text color="dimmed">No description</Text>
+          ),
+      },
+      {
+        accessorKey: "profile.email",
+        header: "Author",
+        Edit: () => null,
+      },
+      {
+        accessorKey: "published",
+        header: "Status",
+        Cell: ({ cell }) => (
+          <Group>
+            <Text>{cell.getValue("published") ? "Published" : "Private"}</Text>
+          </Group>
+        ),
+        Edit: () => null,
       },
     ],
     [getCommonEditTextInputProps]
@@ -84,16 +114,18 @@ export default function PracticeManage() {
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       const { error } = await supabase
-        .from("practice")
+        .from("quiz")
         .update({
-          title: values.title,
+          name: values.name,
+          description: values.description,
+          published: values.published,
         })
         .eq("id", row.original.id);
       if (error) {
         console.log(error);
         notifications.show({
           title: "An error occurs",
-          message: `Could not update practice`,
+          message: `Could not update quiz`,
           icon: <IconX />,
           color: "red",
         });
@@ -101,7 +133,7 @@ export default function PracticeManage() {
         data[row.index] = values;
         mutate(data);
         notifications.show({
-          title: "Practice updated successfully",
+          title: "Quiz updated successfully",
           icon: <IconCheck />,
         });
       }
@@ -113,7 +145,7 @@ export default function PracticeManage() {
   };
   const handleCreateNew = () => {
     modals.open({
-      title: "Create new practice",
+      title: "Create new quiz",
       children: <HandleCreate mutate={mutate} />,
     });
   };
@@ -122,7 +154,7 @@ export default function PracticeManage() {
       title: "Please confirm your action",
       children: (
         <Text size="sm">
-          Are you sure to delete <b>{row.getValue("title")}</b>?
+          Are you sure to delete <b>{row.getValue("name")}</b>?
         </Text>
       ),
       labels: { confirm: "Delete", cancel: "Cancel" },
@@ -130,14 +162,14 @@ export default function PracticeManage() {
       onCancel: () => modals.closeAll(),
       onConfirm: async () => {
         const { error, data } = await supabase
-          .from("practice")
+          .from("quiz")
           .delete()
           .eq("id", row.original.id)
           .select("id")
           .single();
         if (data) {
           notifications.show({
-            title: "Practice deleted successfully",
+            title: "Quiz group deleted successfully",
             icon: <IconCheck />,
           });
           modals.closeAll();
@@ -145,8 +177,8 @@ export default function PracticeManage() {
         }
         if (error) {
           notifications.show({
-            title: "Could not delete practice",
-            message: `This practice might contains one or more challenges.`,
+            title: "Could not delete quiz group",
+            message: `This practice might contains one or more quizzes.`,
             icon: <IconX />,
             color: "red",
           });
@@ -154,9 +186,31 @@ export default function PracticeManage() {
       },
     });
   };
+  const makePublished = async (row) => {
+    const { data, error } = await supabase
+      .from("quiz")
+      .update({ published: !row.original.published })
+      .eq("id", row.original.id)
+      .select("id");
+    if (error) {
+      console.log(error);
+      notifications.show({
+        title: "Could not update quiz status",
+        icon: <IconX />,
+        color: "red",
+      });
+    }
+    if (data) {
+      notifications.show({
+        title: "Quiz status updated successfully",
+        icon: <IconCheck />,
+      });
+      mutate();
+    }
+  };
   return (
     <ManagerLayout>
-      <Title my="md">Practice Group Management</Title>
+      <Title my="md">Quiz Group Management</Title>
       <MantineReactTable
         data={data || []}
         columns={columns}
@@ -184,7 +238,7 @@ export default function PracticeManage() {
             onClick={handleCreateNew}
             variant="filled"
           >
-            + New Practice
+            + New Quiz Group
           </Button>
         )}
         renderRowActions={({ row, table }) => (
@@ -195,12 +249,17 @@ export default function PracticeManage() {
               </ActionIcon>
             </Tooltip>
             <Tooltip withArrow position="right" label="Delete">
-              <ActionIcon
-                color="red"
-                onClick={() => handleDeleteRow(row)}
-                disabled={row.original.challenge_count != 0}
-              >
+              <ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
                 <IconTrash />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip
+              withArrow
+              position="right"
+              label={row.original.published ? "Make Private" : "Publish"}
+            >
+              <ActionIcon onClick={() => makePublished(row)}>
+                {row.original.published ? <IconLock /> : <IconWorldUpload />}
               </ActionIcon>
             </Tooltip>
           </Box>
@@ -210,12 +269,11 @@ export default function PracticeManage() {
   );
 }
 
-PracticeManage.getLayout = (page) => <Layout>{page}</Layout>;
-
-export async function getStaticProps(ctx) {
+QuizManage.getLayout = (page) => <Layout>{page}</Layout>;
+export async function getServerSideProps(ctx) {
   return {
     props: {
-      metaTitle: "Practice Management",
+      metaTitle: "Quiz Group Management",
     },
   };
 }
@@ -225,21 +283,25 @@ const validateRequired = (value) => !!value.length;
 function HandleCreate({ mutate }) {
   const supabase = useSupabaseClient();
   const theme = useMantineTheme();
+  const user = useUser();
   const form = useForm({
     initialValues: {
-      title: "",
+      name: "",
+      description: "",
+      published: false,
+      profile_id: user?.id,
     },
   });
   const handleSubmit = form.onSubmit(async (values) => {
     const { data, error } = await supabase
-      .from("practice")
+      .from("quiz")
       .insert(values)
       .select("id");
     if (error) {
       console.log(error);
       notifications.show({
         title: "An error occurs",
-        message: `Could not add practice`,
+        message: `Could not add quiz group`,
         icon: <IconX />,
         color: "red",
       });
@@ -247,7 +309,7 @@ function HandleCreate({ mutate }) {
     }
     if (data) {
       notifications.show({
-        title: "Practice created successfully",
+        title: "Quiz group created successfully",
         icon: <IconCheck />,
       });
       mutate();
@@ -258,9 +320,23 @@ function HandleCreate({ mutate }) {
     <form onSubmit={handleSubmit}>
       <TextInput
         required
-        placeholder="Enter practice name"
-        label="Title"
-        {...form.getInputProps("title")}
+        placeholder="Enter quiz group name"
+        label="Name"
+        {...form.getInputProps("name")}
+      />
+      <TextInput
+        placeholder="Enter description"
+        label="Description"
+        {...form.getInputProps("description")}
+      />
+      <Select
+        data={[
+          { label: "Published", value: true },
+          { label: "Private", value: false },
+        ]}
+        required
+        label="Status"
+        {...form.getInputProps("published")}
       />
       <Group position="right" mt="sm">
         <Button variant="light" onClick={() => modals.closeAll()}>

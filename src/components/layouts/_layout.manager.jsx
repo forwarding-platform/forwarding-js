@@ -1,4 +1,4 @@
-import { Container, NavLink } from "@mantine/core";
+import { Box, Container, NavLink } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -21,9 +21,7 @@ export default function ManagerLayout({ children }) {
           />
         ))}
       </section>
-      <Container fluid className="overflow-clip">
-        {children}
-      </Container>
+      <Box className="w-full overflow-clip px-5">{children}</Box>
     </div>
   );
 }
@@ -35,14 +33,22 @@ const links = [
   },
   {
     href: "/manager/practice",
-    label: "Practices",
+    label: "Practice Group",
+  },
+  {
+    href: "/manager/practice-challenge",
+    label: "Practice Challenges",
   },
   {
     href: "/manager/requested-tag",
-    label: "Requested Tag",
+    label: "Tags",
   },
   {
     href: "/manager/quiz",
+    label: "Quiz Group",
+  },
+  {
+    href: "/manager/quiz-qa",
     label: "Quizzes",
   },
 ];
