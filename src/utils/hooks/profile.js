@@ -13,7 +13,7 @@ export const useProfile = (key, value) => {
     async () => {
       const { data, error } = await supabase
         .from("profile")
-        .select("*")
+        .select("*, profile_achievement(achievement(*))")
         .eq(key, value)
         .single();
       if (error) throw new Error(error.message);

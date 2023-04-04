@@ -8,6 +8,7 @@ import {
   FileButton,
   FileInput,
   Group,
+  NumberInput,
   Text,
   TextInput,
   Textarea,
@@ -41,7 +42,7 @@ export default function BadgeManage() {
       const { data, error } = await supabase
         .from("achievement")
         .select("*")
-        .order("created_at");
+        .order("fp_required");
       if (error) {
         console.log(error);
         throw new Error(error.message);
@@ -58,6 +59,10 @@ export default function BadgeManage() {
       {
         accessorKey: "description",
         header: "Description",
+      },
+      {
+        accessorKey: "fp_required",
+        header: "FP required",
       },
       {
         accessorKey: "image_url",
@@ -205,9 +210,11 @@ function HandleCreate({ mutate }) {
       name: "",
       description: "",
       image_url: "",
+      fp_required: 0,
     },
     validate: {
       image_url: (value) => (value ? null : "Upload image"),
+      fp_required: (value) => (value < 0 ? "Invalid point" : null),
     },
   });
   useEffect(() => {
@@ -267,6 +274,12 @@ function HandleCreate({ mutate }) {
         autosize
         {...form.getInputProps("description")}
       />
+      <NumberInput
+        label="FP required"
+        min={1}
+        required
+        {...form.getInputProps("fp_required")}
+      />
       <FileInput
         label="Upload image"
         placeholder="Upload image"
@@ -303,6 +316,10 @@ function HandleUpdate({ mutate, row }) {
       name: row.original.name,
       description: row.original.description || "",
       image_url: row.original.image_url,
+      fp_required: row.original.fp_required,
+    },
+    validate: {
+      fp_required: (value) => (value < 0 ? "Invalid FP" : null),
     },
   });
   const [loading, setLoading] = useState(false);
@@ -399,6 +416,12 @@ function HandleUpdate({ mutate, row }) {
         autosize
         required
         {...form.getInputProps("description")}
+      />
+      <NumberInput
+        min={1}
+        label="FP required"
+        required
+        {...form.getInputProps("fp_required")}
       />
       <FileInput
         label="Upload image"

@@ -19,7 +19,9 @@ import {
   Stack,
   Text,
   Title,
+  Tooltip,
   useMantineTheme,
+  Image as Img,
 } from "@mantine/core";
 import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
@@ -341,22 +343,28 @@ export default function ProfileLayout({ username, children }) {
                     View all available
                   </Anchor>
                 </Group>
-                <Text color="dimmed">No achievement</Text>
-              </Paper>
-              {/* <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">
-                <Title order={3} mb="sm">
-                  Interest tags
-                </Title>
-                {profile.interest ? (
-                  profile.interest.map((i, index) => (
-                    <Badge key={index} variant="dot" mx={"sm"}>
-                      {i}
-                    </Badge>
-                  ))
+                {profile?.profile_achievement.length == 0 ? (
+                  <Text color="dimmed">No achievement</Text>
                 ) : (
-                  <Text color="dimmed">No interest tag</Text>
+                  <div className="flex flex-nowrap gap-2">
+                    {profile?.profile_achievement?.map((a) => (
+                      <Tooltip
+                        key={a.achievement.id}
+                        label={a.achievement.description || a.achievement.title}
+                      >
+                        <Img
+                          src={`https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/badges/${a.achievement.image_url}`}
+                          alt={a.achievement.title}
+                          width={64}
+                          height={64}
+                          className=" inline-block"
+                          fit="contain"
+                        />
+                      </Tooltip>
+                    ))}
+                  </div>
                 )}
-              </Paper> */}
+              </Paper>
             </section>
             {/* Main section */}
             <section className="basis-3/5">

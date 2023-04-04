@@ -35,7 +35,9 @@ export default function PracticeGroup({ challenges, title }) {
           difficulty == "All" ? true : c.difficulty == difficulty
         )
         .filter((c) =>
-          completion == "All"
+          !data
+            ? true
+            : completion == "All"
             ? true
             : completion == "Incomplete"
             ? data.find((i) => i.practice_challenge_id !== c.id)
@@ -152,7 +154,7 @@ export function ChallengeCard({ challenge }) {
         withBorder
         shadow="md"
         radius="md"
-        className="ease my-4 transition-all duration-1000"
+        className="ease my-4 transition-all"
         sx={(theme) => ({
           "&:hover": {
             borderColor: theme.fn.primaryColor(),
@@ -175,18 +177,21 @@ export function ChallengeCard({ challenge }) {
               <Text size={"sm"} color="dimmed">
                 Difficulty: {challenge.difficulty}
               </Text>
-              <Text size={"sm"} color="dimmed">
-                {data.find((i) => i.practice_challenge_id !== challenge.id)
-                  ? "[Incomplete]"
-                  : data.find((i) => i.score < challenge.score)
-                  ? `[Complete: ${(
-                      (data.find((i) => i.practice_challenge_id == challenge.id)
-                        .score /
-                        challenge.score) *
-                      100
-                    ).toFixed(0)}%]`
-                  : "[Completed]"}
-              </Text>
+              {data && (
+                <Text size={"sm"} color="dimmed">
+                  {data.find((i) => i.practice_challenge_id !== challenge.id)
+                    ? "[Incomplete]"
+                    : data.find((i) => i.score < challenge.score)
+                    ? `[Complete: ${(
+                        (data.find(
+                          (i) => i.practice_challenge_id == challenge.id
+                        ).score /
+                          challenge.score) *
+                        100
+                      ).toFixed(0)}%]`
+                    : "[Completed]"}
+                </Text>
+              )}
             </Group>
           </Box>
           <Stack spacing={"sm"}>
@@ -195,15 +200,6 @@ export function ChallengeCard({ challenge }) {
               className="mt-4 w-full px-16 transition-all sm:mt-0 sm:w-auto"
               onClick={() => router.push(`/challenge/${challenge.slug}`)}
             >
-              {/*  : completion == "Incomplete"
-            ? data.find((i) => i.practice_challenge_id !== c.id)
-            : completion == "Partly Completed"
-            ? data.find(
-                (i) => i.practice_challenge_id == c.id && i.score < c.score
-              )
-            : data.find(
-                (i) => i.practice_challenge_id == c.id && i.score == c.score
-              ) */}
               Solve
             </Button>
             <Button

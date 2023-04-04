@@ -4,39 +4,30 @@ import {
   Group,
   Center,
   Box,
+  ActionIcon,
+  Affix,
+  rem,
+  useMantineTheme,
 } from "@mantine/core";
-import { IconSun, IconMoon } from "@tabler/icons-react";
+import { IconSun, IconMoon, IconMoonStars } from "@tabler/icons-react";
 
 export default function ToggleScheme() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
+  const theme = useMantineTheme();
   return (
-    <Group position="center">
-      <SegmentedControl
-        value={colorScheme}
-        size="xs"
-        onChange={(value) => toggleColorScheme()}
-        data={[
-          {
-            value: "light",
-            label: (
-              <Center>
-                <IconSun size="1rem" stroke={1.5} />
-                {/* <Box ml={10}>Light</Box> */}
-              </Center>
-            ),
-          },
-          {
-            value: "dark",
-            label: (
-              <Center>
-                <IconMoon size="1rem" stroke={1.5} />
-                {/* <Box ml={10}>Dark</Box> */}
-              </Center>
-            ),
-          },
-        ]}
-      />
-    </Group>
+    <Affix position={{ bottom: rem(20), left: rem(20) }}>
+      <ActionIcon
+        variant="light"
+        size={"xl"}
+        radius={"xl"}
+        onClick={() => toggleColorScheme()}
+      >
+        {colorScheme === "dark" ? (
+          <IconSun strokeWidth={1.5} />
+        ) : (
+          <IconMoonStars strokeWidth={1.5} />
+        )}
+      </ActionIcon>
+    </Affix>
   );
 }

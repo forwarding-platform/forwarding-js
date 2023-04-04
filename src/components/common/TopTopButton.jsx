@@ -13,7 +13,7 @@ export default function TopTopButton() {
   const [{ y }, scrollTo] = useWindowScroll();
   const theme = useMantineTheme();
   return (
-    <Affix position={{ bottom: rem(20), right: rem(20) }} zIndex={20000000}>
+    <Affix position={{ bottom: rem(20), right: rem(20) }}>
       <Transition transition="slide-up" mounted={y > 300}>
         {(transitionStyles) => (
           <ActionIcon
