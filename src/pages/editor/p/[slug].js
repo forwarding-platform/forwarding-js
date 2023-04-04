@@ -1,7 +1,6 @@
 import MarkdownParser from "@/components/common/MarkdownParser";
 import Layout from "@/components/layouts/_layout";
 import UploadImage from "@/components/UploadImage";
-import { supabase } from "@/libs/supabase";
 import { useProfile } from "@/utils/hooks/profile";
 
 import {
@@ -25,16 +24,19 @@ import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconArrowNarrowLeft,
+  IconCheck,
   IconHelpSmall,
   IconPhotoPlus,
 } from "@tabler/icons-react";
 
-import TopTopButton from "@/components/common/TopTopButton";
+import RequestTag from "@/components/RequestTag";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import RequestTag from "@/components/RequestTag";
+import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
 
-export default function EditorPage({ tags }) {
+export default function EditorPage({ tags, post }) {
   const theme = useMantineTheme();
   const router = useRouter();
   const supabase = useSupabaseClient();
@@ -44,9 +46,10 @@ export default function EditorPage({ tags }) {
   const [images, setImages] = useState([]);
   const form = useForm({
     initialValues: {
-      postTag: [],
-      title: "",
-      content: "",
+      postTag: post.post_tag.map((p) => p.tag.id),
+      title: post.title,
+      content: post.content,
+      image_url: post.image_url,
     },
     validate: {
       postTag: (value) =>
@@ -106,38 +109,71 @@ export default function EditorPage({ tags }) {
         });
         supabase
           .from("post")
-          .insert({
+          .update({
             title: values.title,
             content: replaced,
             profile_id: user.id,
-            type: "blog",
-            image_url: uploadedImages.map((i) => i.data.path),
+            image_url: [
+              ...post.image_url,
+              uploadedImages.map((i) => i.data.path),
+            ],
           })
+          .eq("id", post.id)
           .select("id")
           .single()
           .then(
             (post) => {
-              const postTags = values.postTag.map((t) => ({
-                post_id: post.data.id,
-                tag_id: t,
-              }));
               supabase
                 .from("post_tag")
-                .insert(postTags)
+                .delete()
+                .eq("post_id", post.data.id)
                 .then(
                   () => {
-                    setLoading(false);
-                    router.push(`/user/${profile.username}`);
+                    const postTags = values.postTag.map((t) => ({
+                      post_id: post.data.id,
+                      tag_id: t,
+                    }));
+                    supabase
+                      .from("post_tag")
+                      .insert(postTags)
+                      .then(
+                        () => {
+                          setLoading(false);
+                          notifications.show({
+                            title: "Post updated successfully",
+                            icon: <IconCheck />,
+                          });
+                          router.push(`/user/${profile.username}`);
+                        },
+                        (error) => {
+                          setLoading(false);
+                          notifications.show({
+                            title: "An error occurs",
+                            message: "Could not update post",
+                            color: "red",
+                            icon: <IconX />,
+                          });
+                        }
+                      );
                   },
                   (error) => {
-                    setLoading(false);
-                    window.alert("An error occurs when tagging...");
+                    notifications.show({
+                      title: "An error occurs",
+                      message: "Could not update post",
+                      color: "red",
+                      icon: <IconX />,
+                    });
                   }
                 );
             },
             (error) => {
               setLoading(false);
-              window.alert("An error occurs when posting...");
+              notifications.show({
+                title: "An error occurs",
+                message: "Could not update post",
+                color: "red",
+                icon: <IconX />,
+              });
             }
           );
       });
@@ -158,7 +194,7 @@ export default function EditorPage({ tags }) {
           Back
         </Button>
         <Group>
-          <Title>New Post Editor</Title>
+          <Title>Post Editor</Title>
         </Group>
         <Divider mb="md" />
         <form
@@ -169,6 +205,7 @@ export default function EditorPage({ tags }) {
           <MultiSelect
             searchable
             required
+            value={form.values.postTag}
             data={tags.map((t) => ({ value: t.id, label: t.name }))}
             placeholder="Select at least 1 tag, up to 3 tags"
             className="flex-1"
@@ -249,7 +286,9 @@ export default function EditorPage({ tags }) {
           </Text>
           <div className="mt-2 self-end">
             <Group>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" onClick={() => router.back()}>
+                Cancel
+              </Button>
               <Button
                 disabled={form.values.content.length == 0}
                 variant="outline"
@@ -267,7 +306,7 @@ export default function EditorPage({ tags }) {
                 Preview
               </Button>
               <Button type="submit" disabled={!form.isValid}>
-                Post
+                Save Changes
               </Button>
             </Group>
           </div>
@@ -281,13 +320,39 @@ EditorPage.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-export async function getStaticProps(ctx) {
+/**
+ *
+ * @param {import("next").GetServerSidePropsContext} ctx
+ * @returns
+ */
+export async function getServerSideProps(ctx) {
+  const { params, req, res } = ctx;
+  const { slug } = params;
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: post, error: postErr } = await supabase
+    .from("post")
+    .select("*, post_tag(tag(id,name))")
+    .eq("slug", slug)
+    .eq("profile_id", session.user.id)
+    .eq("type", "blog")
+    .single();
+
+  if (postErr || post.length == 0)
+    return {
+      notFound: true,
+    };
+
   const { data, error } = await supabase.from("tag").select("*");
   if (error) throw new Error(error.message);
   return {
     props: {
       tags: data,
-      metaTitle: "New Post",
+      post: post,
+      metaTitle: "Edit Post",
     },
   };
 }

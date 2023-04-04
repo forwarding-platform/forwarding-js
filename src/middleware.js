@@ -25,8 +25,10 @@ export async function middleware(req, respond) {
     "/code",
     "/quiz",
     "/practice",
+    "/creator",
     "/editor",
     "/manager",
+    "/challenge",
   ];
   if (featureRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
     if (!session) {

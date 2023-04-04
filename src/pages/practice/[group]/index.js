@@ -1,6 +1,8 @@
+import ChallengeLeaderboard from "@/components/ChallengeLeaderboard";
 import Layout from "@/components/layouts/_layout";
 import { supabaseAdmin } from "@/libs/adminSupabase";
 import { supabase } from "@/libs/supabase";
+import { useChallengeResult } from "@/utils/hooks/challenge";
 import {
   Anchor,
   Box,
@@ -15,22 +17,56 @@ import {
   Title,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
+import { useUser } from "@supabase/auth-helpers-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
 
 export default function PracticeGroup({ challenges, title }) {
+  const [difficulty, setDifficulty] = useState("All");
+  const [completion, setCompletion] = useState("All");
+  const user = useUser();
+  const { data } = useChallengeResult(user);
+  const filteredList = useMemo(
+    () =>
+      challenges
+        .filter((c) =>
+          difficulty == "All" ? true : c.difficulty == difficulty
+        )
+        .filter((c) =>
+          completion == "All"
+            ? true
+            : completion == "Incomplete"
+            ? data.find((i) => i.practice_challenge_id !== c.id)
+            : completion == "Partly Completed"
+            ? data.find(
+                (i) => i.practice_challenge_id == c.id && i.score < c.score
+              )
+            : data.find(
+                (i) => i.practice_challenge_id == c.id && i.score == c.score
+              )
+        ),
+    [challenges, completion, data, difficulty]
+  );
   return (
     <>
       <Container size="lg">
         <Title my="md">{title}</Title>
-        {challenges.length == 0 && <Text>There is no challenges yet.</Text>}
+        {filteredList.length == 0 && <Text>There is no challenges found.</Text>}
         <div className="flex w-full">
-          <section className="w-full sm:basis-2/3 lg:basis-3/4">
-            {challenges.map((challenge) => (
+          <section className="w-full md:basis-2/3 lg:basis-3/4">
+            {filteredList.map((challenge) => (
               <ChallengeCard key={challenge.id} challenge={challenge} />
             ))}
           </section>
-          <section className="hidden pl-10 sm:flex sm:basis-1/3 sm:flex-col lg:basis-1/4">
-            <Radio.Group name="difficultyFilter" label="Difficulty">
+          <section className="hidden pl-10 md:sticky md:top-[65px] md:flex md:basis-1/3 md:flex-col md:self-start lg:basis-1/4">
+            <Radio.Group
+              name="difficultyFilter"
+              label="Difficulty"
+              value={difficulty}
+              onChange={setDifficulty}
+            >
               <Stack spacing="sm" mt="sm">
                 <Radio value="Easy" label="Easy" />
                 <Radio value="Medium" label="Medium" />
@@ -40,7 +76,12 @@ export default function PracticeGroup({ challenges, title }) {
               </Stack>
             </Radio.Group>
             <Divider my="lg" />
-            <Radio.Group name="statusFilter" label="Status">
+            <Radio.Group
+              name="statusFilter"
+              label="Status"
+              value={completion}
+              onChange={setCompletion}
+            >
               <Stack spacing="sm" mt={"sm"}>
                 <Radio value="Incomplete" label="Incomplete" />
                 <Radio value="Partly Completed" label="Partly Completed" />
@@ -95,18 +136,23 @@ export async function getStaticProps(ctx) {
 
 export function ChallengeCard({ challenge }) {
   const { hovered, ref } = useHover();
+  const router = useRouter();
+  const user = useUser();
+  const { data } = useChallengeResult(user);
+  const handleLeaderboard = () => {
+    modals.open({
+      title: `${challenge.title} Leaderboard`,
+      children: <ChallengeLeaderboard challengeId={challenge.id} />,
+      size: "lg",
+    });
+  };
   return (
-    <Anchor
-      component={Link}
-      href={`/challenge/${challenge.slug}`}
-      unstyled
-      ref={ref}
-    >
+    <Anchor unstyled ref={ref}>
       <Card
         withBorder
         shadow="md"
         radius="md"
-        className="ease my-4 transition-all hover:-translate-y-[2px]"
+        className="ease my-4 transition-all duration-1000"
         sx={(theme) => ({
           "&:hover": {
             borderColor: theme.fn.primaryColor(),
@@ -129,14 +175,45 @@ export function ChallengeCard({ challenge }) {
               <Text size={"sm"} color="dimmed">
                 Difficulty: {challenge.difficulty}
               </Text>
+              <Text size={"sm"} color="dimmed">
+                {data.find((i) => i.practice_challenge_id !== challenge.id)
+                  ? "[Incomplete]"
+                  : data.find((i) => i.score < challenge.score)
+                  ? `[Complete: ${(
+                      (data.find((i) => i.practice_challenge_id == challenge.id)
+                        .score /
+                        challenge.score) *
+                      100
+                    ).toFixed(0)}%]`
+                  : "[Completed]"}
+              </Text>
             </Group>
           </Box>
-          <Button
-            variant={hovered ? "filled" : "outline"}
-            className="mt-4 w-full px-16 transition-all sm:mt-0 sm:w-auto"
-          >
-            Solve
-          </Button>
+          <Stack spacing={"sm"}>
+            <Button
+              variant={hovered ? "filled" : "outline"}
+              className="mt-4 w-full px-16 transition-all sm:mt-0 sm:w-auto"
+              onClick={() => router.push(`/challenge/${challenge.slug}`)}
+            >
+              {/*  : completion == "Incomplete"
+            ? data.find((i) => i.practice_challenge_id !== c.id)
+            : completion == "Partly Completed"
+            ? data.find(
+                (i) => i.practice_challenge_id == c.id && i.score < c.score
+              )
+            : data.find(
+                (i) => i.practice_challenge_id == c.id && i.score == c.score
+              ) */}
+              Solve
+            </Button>
+            <Button
+              variant={hovered ? "light" : "subtle"}
+              className="w-full px-16 transition-all sm:mt-0 sm:w-auto"
+              onClick={handleLeaderboard}
+            >
+              Leaderboard
+            </Button>
+          </Stack>
         </div>
       </Card>
     </Anchor>

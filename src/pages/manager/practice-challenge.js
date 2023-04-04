@@ -206,7 +206,7 @@ export async function getStaticProps(ctx) {
 function HandleUpdate({ row, mutate }) {
   const supabase = useSupabaseClient();
   const theme = useMantineTheme();
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState(true);
   const [practice, setPractice] = useState([]);
   useEffect(() => {
     (async () => {
@@ -413,7 +413,7 @@ function HandleCreate({ mutate }) {
   const supabase = useSupabaseClient();
   const theme = useMantineTheme();
   const user = useUser();
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState(true);
   const [practice, setPractice] = useState([]);
   useEffect(() => {
     (async () => {

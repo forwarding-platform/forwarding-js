@@ -30,8 +30,10 @@ import React, { useState } from "react";
 import { mutate } from "swr";
 import CommentEditor from "./CommentEditor";
 import MarkdownParser from "./common/MarkdownParser";
+import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
 
-export default function CommentCard({ comment, accepted }) {
+export default function CommentCard({ comment, post }) {
   const router = useRouter();
   const theme = useMantineTheme();
   const user = useUser();
@@ -87,9 +89,30 @@ export default function CommentCard({ comment, accepted }) {
       onCancel: () => modals.closeAll(),
     });
   };
+  const handleAccept = async () => {
+    const { data, error } = await supabase
+      .from("post")
+      .update({ accepted_answer: comment.id })
+      .eq("id", post.id)
+      .select("id")
+      .single();
+    if (error) {
+      console.log(error);
+      notifications.show({
+        title: "An error occurs",
+        message: "Could not perform action",
+        color: "red",
+        icon: <IconX />,
+      });
+    }
+    if (data) {
+      router.push(router.asPath, null);
+      // need revalidate
+    }
+  };
   return (
     <>
-      {accepted == comment.id && (
+      {post.accepted_answer == comment.id && (
         <Badge color={theme.fn.primaryColor()} variant="filled" radius={0}>
           <Group spacing={5}>
             <IconCheck size={rem(14)} /> Accepted Answer
@@ -132,7 +155,8 @@ export default function CommentCard({ comment, accepted }) {
           mb="sm"
           style={{
             borderTop:
-              accepted == comment.id && `2px solid ${theme.fn.primaryColor()}`,
+              post.accepted_answer == comment.id &&
+              `2px solid ${theme.fn.primaryColor()}`,
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
           }}
@@ -183,6 +207,19 @@ export default function CommentCard({ comment, accepted }) {
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
+              {user &&
+                user.id == post.profile_id &&
+                post.accepted_answer !== comment.id && (
+                  <Menu.Item
+                    color={theme.fn.primaryColor()}
+                    onClick={handleAccept}
+                  >
+                    <Group spacing={5}>
+                      <IconCheck strokeWidth={1.5} size={16} />
+                      <Text>Mark as accepted</Text>
+                    </Group>
+                  </Menu.Item>
+                )}
               <Menu.Item>
                 <Group spacing={5}>
                   <IconFlag strokeWidth={1.5} size={16} />

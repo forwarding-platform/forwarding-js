@@ -5,16 +5,16 @@ import Link from "next/link";
 import React from "react";
 import useSWR from "swr";
 
-export default function QuizLeaderboard({ quizId }) {
+export default function ChallengeLeaderboard({ challengeId }) {
   const supabase = useSupabaseClient();
   const user = useUser();
   const { data, isLoading, error } = useSWR(
-    user ? `leaderboard-quiz-${quizId}` : null,
+    user ? `leaderboard-challenge-${challengeId}` : null,
     async () => {
       const { data, error } = await supabase
-        .from("quiz_record")
+        .from("practice_challenge_record")
         .select("*, profile(email,username)")
-        .eq("quiz_id", quizId)
+        .eq("practice_challenge_id", challengeId)
         .order("score", { ascending: false })
         .order("time")
         .limit(10);
@@ -33,6 +33,7 @@ export default function QuizLeaderboard({ quizId }) {
     );
   if (error)
     return <Center>An error occurs when generating leaderboard</Center>;
+  if (data.length == 0) return <Center>No records yet</Center>;
   return (
     <Table>
       <thead>
@@ -57,7 +58,7 @@ export default function QuizLeaderboard({ quizId }) {
               </Anchor>
             </td>
             <td>{d.score}</td>
-            <td>{new Date(d.time * 1000).toISOString().slice(11, 19)}</td>
+            <td>{d.time.toFixed(3)}</td>
           </tr>
         ))}
       </tbody>

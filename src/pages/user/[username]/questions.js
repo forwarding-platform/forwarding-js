@@ -5,12 +5,14 @@ import { supabase } from "@/libs/supabase";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import {
+  ActionIcon,
   Badge,
   Box,
   Card,
   Center,
   Group,
   Loader,
+  Menu,
   Stack,
   Text,
   Title,
@@ -18,6 +20,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useUser } from "@supabase/auth-helpers-react";
+import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -74,11 +77,38 @@ export default function QuestionPage({ profile }) {
                   </Text>
                 </Stack>
               </Group>
-              <BookmarkIcon
-                postId={post.id}
-                bookmarks={bookmarks}
-                mutate={mutate}
-              />
+              <Group spacing={3}>
+                <BookmarkIcon
+                  postId={post.id}
+                  bookmarks={bookmarks}
+                  mutate={mutate}
+                />
+                {user && post.profile_id == user?.id && (
+                  <Menu withinPortal width={200} withArrow>
+                    <Menu.Target>
+                      <ActionIcon>
+                        <IconDots />
+                      </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        onClick={() => router.push(`/editor/q/${post.slug}`)}
+                      >
+                        <Group>
+                          <IconEdit strokeWidth={1.5} />
+                          <Text size={"sm"}>Edit</Text>
+                        </Group>
+                      </Menu.Item>
+                      <Menu.Item color="red">
+                        <Group>
+                          <IconTrash strokeWidth={1.5} />
+                          <Text size={"sm"}>Delete</Text>
+                        </Group>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                )}
+              </Group>
             </Group>
             <Box my={"sm"}>
               <Link href={`/qna/${post.slug}`} className=" hover:underline">

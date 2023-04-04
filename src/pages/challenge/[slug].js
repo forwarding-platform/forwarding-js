@@ -21,7 +21,14 @@ import {
   Title,
 } from "@mantine/core";
 import { useScrollIntoView } from "@mantine/hooks";
-import { IconChecks, IconChevronRight, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import {
+  IconChecks,
+  IconChevronRight,
+  IconConfetti,
+  IconX,
+} from "@tabler/icons-react";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -43,6 +50,25 @@ export default function ChallengePage({ challenge }) {
   const [code, setCode] = useState(languageOptions[0].default.runner);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState([]);
+  const supabase = useSupabaseClient();
+  const user = useUser();
+  const isPassed =
+    result.length > 3 &&
+    result.filter((r) => r.status.id === 3).length >=
+      Math.floor(result.length / 3);
+  const isPassedAll =
+    result.length > 3 &&
+    result.filter((r) => r.status.id === 3).length == result.length;
+  const score =
+    result.length > 3 && isPassedAll
+      ? challenge.score
+      : Math.floor(
+          (challenge.score / result.length) *
+            result.filter((r) => r.status.id === 3).length
+        );
+  const time =
+    result.length > 3 &&
+    result.map((r) => Number.parseFloat(r.time)).reduce((a, b) => a + b);
   const { scrollIntoView, targetRef } = useScrollIntoView({ offset: 150 });
   const breadcrumbItems = [
     { title: "Practice", href: "/practice" },
@@ -64,7 +90,50 @@ export default function ChallengePage({ challenge }) {
     if (result.length !== 0 && submitting == false) scrollIntoView();
   }, [submitting]);
 
+  useEffect(() => {
+    if (isPassedAll) {
+      notifications.show({
+        title: "Congratulations!",
+        message: "You aced the challenge with a perfect score",
+        icon: <IconConfetti />,
+      });
+    }
+  }, [isPassedAll]);
+
+  useEffect(() => {
+    (async () => {
+      if (isPassed && user) {
+        const { data, error } = await supabase
+          .from("practice_challenge_record")
+          .insert({
+            profile_id: user.id,
+            score: score,
+            practice_challenge_id: challenge.id,
+            time: time,
+            language:
+              languageOptions.find((l) => l.value == selectedLang)?.name ||
+              "Unknown",
+          });
+        if (error) {
+          console.log(error);
+          notifications.show({
+            title: "An error occurs",
+            message: "Could not submit your record",
+            icon: <IconX />,
+            color: "red",
+          });
+        } else {
+          notifications.show({
+            title: "Record submitted successfully!",
+            icon: <IconConfetti />,
+          });
+        }
+      }
+    })();
+  }, [isPassed]);
+
   const testCode = () => {
+    setResult([]);
     setSubmitting(true);
     axios
       .post(
@@ -93,6 +162,7 @@ export default function ChallengePage({ challenge }) {
   };
 
   const submitCode = () => {
+    setResult([]);
     setSubmitting(true);
     axios
       .post(
@@ -121,7 +191,6 @@ export default function ChallengePage({ challenge }) {
   };
 
   const getResult = (tokens) => {
-    let t;
     axios
       .get(
         `${process.env.NEXT_PUBLIC_JUDGE_URL}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=stdout,stderr,status,expected_output,time,compile_output,stdin`
@@ -131,7 +200,7 @@ export default function ChallengePage({ challenge }) {
           data.data.submissions.forEach((s) => {
             let status = s.status.id;
             if (status === 1 || status === 2) {
-              setTimeout(() => getResult(tokens), 500);
+              setTimeout(() => getResult(tokens), 1000);
             } else {
               setResult(data.data.submissions);
               setSubmitting(false);
@@ -251,6 +320,8 @@ export default function ChallengePage({ challenge }) {
           >
             You have passed {result.filter((r) => r.status.id === 3).length}/
             {result.length} test case{result.length !== 1 && "s"}
+            <Text>Score: {score}</Text>
+            <Text>Time consumed: {time.toFixed(3)}</Text>
           </Alert>
         )}
         <Stack className="w-full" mt="sm" ref={targetRef}>

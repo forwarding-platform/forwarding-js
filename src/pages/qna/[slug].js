@@ -175,11 +175,7 @@ export default function QADetailPage({ post, morePost }) {
                 </Center>
               )}
               {answers?.map((a, i) => (
-                <CommentCard
-                  key={i}
-                  comment={a}
-                  accepted={post.accepted_answer}
-                />
+                <CommentCard post={post} key={i} comment={a} />
               ))}
             </div>
           </section>

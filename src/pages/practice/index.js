@@ -58,7 +58,8 @@ PracticePage.getLayout = function getLayout(page) {
 export async function getStaticProps() {
   const { data, error } = await supabaseAdmin
     .rpc("get_practice_count_challenge")
-    .select("*");
+    .select("*")
+    .order("title");
   return {
     props: {
       practices: data,

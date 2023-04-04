@@ -151,11 +151,13 @@ export default function ProfileLayout({ username, children }) {
               src={
                 profile.cover_url
                   ? `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/covers/${profile.cover_url}`
-                  : "/utils/gray.png"
+                  : "/logo.svg"
               }
               fill
               alt="cover"
-              className="rounded-bl-lg rounded-br-lg object-cover object-center"
+              className={`rounded-bl-lg rounded-br-lg object-cover object-center ${
+                profile.cover_url ?? "bg-fuchsia-200"
+              }`}
             />
             {user && user?.id == profile.id && (
               <Button
@@ -240,10 +242,10 @@ export default function ProfileLayout({ username, children }) {
                       </Button>
                     </Menu.Target>
                     <Menu.Dropdown>
-                      <Menu.Item component={Link} href="/editor">
+                      <Menu.Item component={Link} href="/creator/post">
                         New post
                       </Menu.Item>
-                      <Menu.Item component={Link} href="/editor/question">
+                      <Menu.Item component={Link} href="/creator/question">
                         New question
                       </Menu.Item>
                     </Menu.Dropdown>
@@ -332,16 +334,16 @@ export default function ProfileLayout({ username, children }) {
                     </Group>
                   ))}
               </Paper>
-              <Paper className="flex min-h-[180px] flex-col gap-2 rounded-lg border p-4 shadow">
+              <Paper className="flex min-h-[300px] flex-col gap-2 rounded-lg border p-4 shadow">
                 <Group position="apart">
                   <Title order={3}>Achievements </Title>
                   <Anchor component={Link} href={"/achievement"} size={"xs"}>
-                    View all
+                    View all available
                   </Anchor>
                 </Group>
                 <Text color="dimmed">No achievement</Text>
               </Paper>
-              <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">
+              {/* <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">
                 <Title order={3} mb="sm">
                   Interest tags
                 </Title>
@@ -354,7 +356,7 @@ export default function ProfileLayout({ username, children }) {
                 ) : (
                   <Text color="dimmed">No interest tag</Text>
                 )}
-              </Paper>
+              </Paper> */}
             </section>
             {/* Main section */}
             <section className="basis-3/5">

@@ -7,19 +7,30 @@ import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import { useLike } from "@/utils/hooks/like";
 import {
+  ActionIcon,
   Badge,
   Box,
   Card,
   Center,
   Group,
   Loader,
+  Menu,
   Stack,
   Text,
   Title,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { useUser } from "@supabase/auth-helpers-react";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import {
+  IconCheck,
+  IconDots,
+  IconEdit,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,9 +39,42 @@ import { useRouter } from "next/router";
 export default function ProfilePage({ profile }) {
   const router = useRouter();
   const theme = useMantineTheme();
+  const supabase = useSupabaseClient();
   const user = useUser();
   const { bookmarks, mutate } = useBookmark(user);
   const { likes, mutate: mutateLike } = useLike(user);
+  const handleDelete = (id) => {
+    modals.openConfirmModal({
+      title: "Please confirm your action",
+      children: <Text size="sm">Are you sure to delete this post?</Text>,
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onCancel: () => modals.closeAll(),
+      onConfirm: async () => {
+        const { error, data } = await supabase
+          .from("post")
+          .delete()
+          .eq("id", id)
+          .select("id")
+          .single();
+        if (data) {
+          notifications.show({
+            title: "Post deleted successfully",
+            icon: <IconCheck />,
+          });
+          modals.closeAll();
+        }
+        if (error) {
+          console.log(error);
+          notifications.show({
+            title: "Could not delete post",
+            icon: <IconX />,
+            color: "red",
+          });
+        }
+      },
+    });
+  };
   if (router.isFallback)
     return (
       <>
@@ -78,13 +122,41 @@ export default function ProfilePage({ profile }) {
                   </Text>
                 </Stack>
               </Group>
-              <Group>
+              <Group spacing={3}>
                 <HeartIcon postId={post.id} likes={likes} mutate={mutateLike} />
                 <BookmarkIcon
                   postId={post.id}
                   bookmarks={bookmarks}
                   mutate={mutate}
                 />
+                {user && post.profile_id == user?.id && (
+                  <Menu withinPortal width={200} withArrow>
+                    <Menu.Target>
+                      <ActionIcon>
+                        <IconDots />
+                      </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        onClick={() => router.push(`/editor/p/${post.slug}`)}
+                      >
+                        <Group>
+                          <IconEdit strokeWidth={1.5} />
+                          <Text size={"sm"}>Edit</Text>
+                        </Group>
+                      </Menu.Item>
+                      <Menu.Item
+                        color="red"
+                        onClick={() => handleDelete(post.id)}
+                      >
+                        <Group>
+                          <IconTrash strokeWidth={1.5} />
+                          <Text size={"sm"}>Delete</Text>
+                        </Group>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                )}
               </Group>
             </Group>
             <Box my={"sm"}>
