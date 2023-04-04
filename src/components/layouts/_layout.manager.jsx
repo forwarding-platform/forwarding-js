@@ -51,4 +51,8 @@ const links = [
     href: "/manager/quiz-qa",
     label: "Quizzes",
   },
+  {
+    href: "/manager/achievement",
+    label: "Achievement",
+  },
 ];

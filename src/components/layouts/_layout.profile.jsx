@@ -333,7 +333,12 @@ export default function ProfileLayout({ username, children }) {
                   ))}
               </Paper>
               <Paper className="flex min-h-[180px] flex-col gap-2 rounded-lg border p-4 shadow">
-                <Title order={3}>Achievements</Title>
+                <Group position="apart">
+                  <Title order={3}>Achievements </Title>
+                  <Anchor component={Link} href={"/achievement"} size={"xs"}>
+                    View all
+                  </Anchor>
+                </Group>
                 <Text color="dimmed">No achievement</Text>
               </Paper>
               <Paper className="min-h-[180px] gap-2 rounded-lg border p-4 shadow">

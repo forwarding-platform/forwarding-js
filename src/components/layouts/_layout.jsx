@@ -29,7 +29,7 @@ export default function Layout({ children }) {
         }}
         padding={0}
       >
-        <Box className="h-full min-h-screen">{children}</Box>
+        <Box className="h-full min-h-[50vh]">{children}</Box>
         <div className="fixed bottom-0 left-0 m-1">
           <ToggleScheme />
         </div>

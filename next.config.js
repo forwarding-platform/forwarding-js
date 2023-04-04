@@ -23,6 +23,9 @@ const nextConfig = {
         protocol: "https",
         hostname: "robohash.org",
       },
+      {
+        hostname: "picsum.photos",
+      },
     ],
     dangerouslyAllowSVG: true,
   },

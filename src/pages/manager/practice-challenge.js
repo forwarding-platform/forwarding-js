@@ -490,7 +490,7 @@ function HandleCreate({ mutate }) {
       console.log(error);
       notifications.show({
         title: "An error occurs",
-        message: "Could not delete this challenge",
+        message: "Could not add this challenge",
         icon: <IconX />,
         color: "red",
       });
@@ -498,7 +498,7 @@ function HandleCreate({ mutate }) {
     }
     if (data) {
       notifications.show({
-        title: "Challenge created successfully",
+        title: "Challenge added successfully",
         message: "It may take few minutes to apply changes",
         icon: <IconCheck />,
         color: theme.fn.primaryColor(),

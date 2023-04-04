@@ -32,6 +32,7 @@ import {
 import TopTopButton from "@/components/common/TopTopButton";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import RequestTag from "@/components/RequestTag";
 
 export default function EditorPage({ tags }) {
   const theme = useMantineTheme();
@@ -177,7 +178,17 @@ export default function EditorPage({ tags }) {
           />
           <Group position="right">
             <Text size="sm">
-              Want to contribute new tag? <Anchor>Request tag</Anchor>
+              Want to contribute new tag?{" "}
+              <Anchor
+                onClick={() =>
+                  modals.open({
+                    title: "Request tag",
+                    children: <RequestTag tags={tags} />,
+                  })
+                }
+              >
+                Request tag
+              </Anchor>
             </Text>
           </Group>
           <TextInput
