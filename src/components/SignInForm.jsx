@@ -17,11 +17,13 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconLockExclamation } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function SignInForm() {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const form = useForm({
@@ -36,7 +38,7 @@ export default function SignInForm() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "https://forwarding.vercel.app",
+        // redirectTo: "https://forwarding.vercel.app",
       },
     });
     if (error) open();
