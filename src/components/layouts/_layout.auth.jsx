@@ -16,7 +16,7 @@ export default function AuthLayout({ children }) {
       </Head>
       <Box
         className="flex h-full min-h-screen w-full flex-1"
-        p={{ base: "xl", lg: 0 }}
+        py={{ base: "xl", lg: 0 }}
         style={{
           backgroundColor:
             theme.colorScheme == "dark"
@@ -39,7 +39,7 @@ export default function AuthLayout({ children }) {
             py="md"
             px="md"
             className="self-center md:mb-5 lg:grow"
-            w={{ base: 400 }}
+            w={{ base: "100%", xs: 400 }}
             bg={
               theme.colorScheme == "dark" ? theme.colors.dark[7] : theme.white
             }

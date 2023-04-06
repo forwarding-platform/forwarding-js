@@ -26,6 +26,10 @@ const nextConfig = {
       {
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        hostname: "*",
+      },
     ],
     dangerouslyAllowSVG: true,
   },

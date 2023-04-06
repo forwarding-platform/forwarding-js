@@ -13,7 +13,7 @@ export default function AppFooter() {
         component={Link}
         key={index}
         href={link.href}
-        onClick={(e) => e.preventDefault()}
+        // onClick={(e) => e.preventDefault()}
         className="block py-[3px] text-sm hover:underline"
         color="dimmed"
       >
@@ -28,7 +28,7 @@ export default function AppFooter() {
     );
   });
   return (
-    <Container className="flex flex-col items-center justify-center py-2 md:flex-row md:justify-between">
+    <Container className="flex flex-col items-center justify-center py-2 md:flex-row md:justify-around">
       <div className="hidden md:block">
         <div className="flex w-full items-center justify-center md:justify-start">
           <AppLogo />
@@ -38,7 +38,7 @@ export default function AppFooter() {
           color="dimmed"
           className="mt-3 hidden max-w-[200px] text-center md:mt-7 md:block md:text-left"
         >
-          Learning, sharing, and practicing made easy with Forwarding Platform
+          Learn, share, practice with Forwarding easier than ever.
         </Text>
       </div>
       <div className="mb-2 hidden flex-wrap md:flex">{linkGroup}</div>
@@ -52,7 +52,7 @@ export default function AppFooter() {
               component={Link}
               key={index}
               href={link.href}
-              onClick={(e) => e.preventDefault()}
+              // onClick={(e) => e.preventDefault()}
               color="dimmed"
               className="mx-3"
             >

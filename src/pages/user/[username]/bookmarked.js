@@ -64,5 +64,6 @@ export async function getStaticProps(ctx) {
     props: {
       username: params.username,
     },
+    revalidate: 30,
   };
 }

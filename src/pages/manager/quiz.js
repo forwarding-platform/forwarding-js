@@ -270,7 +270,7 @@ export default function QuizManage() {
 }
 
 QuizManage.getLayout = (page) => <Layout>{page}</Layout>;
-export async function getServerSideProps(ctx) {
+export async function getStaticProps(ctx) {
   return {
     props: {
       metaTitle: "Quiz Group Management",

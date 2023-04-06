@@ -225,16 +225,16 @@ export default function QADetailPage({ post, morePost }) {
 
 QADetailPage.getLayout = (page) => <Layout>{page}</Layout>;
 
-export async function getStaticPaths() {
-  const { data: path } = await supabase
-    .from("post")
-    .select("slug")
-    .eq("type", "question");
-  const paths = path.map((p) => ({ params: { slug: p.slug.toString() } }));
-  return { paths, fallback: "blocking" };
-}
+// export async function getStaticPaths() {
+//   const { data: path } = await supabase
+//     .from("post")
+//     .select("slug")
+//     .eq("type", "question");
+//   const paths = path.map((p) => ({ params: { slug: p.slug.toString() } }));
+//   return { paths, fallback: "blocking" };
+// }
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
   const { params } = ctx;
   const { data, error } = await supabase
     .from("post")

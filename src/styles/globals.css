@@ -17,3 +17,29 @@ a {
   text-decoration: none;
   color: unset;
 }
+
+@media (min-width: 400px) {
+  .background-gradient-dark::before {
+    background: radial-gradient(20% 50% at 50% 50%,
+        rgba(133, 14, 117, 0.376) 0%,
+        rgba(37, 38, 44, 0) 100%);
+    z-index: -10;
+    content: "";
+    position: absolute;
+    inset: 0px;
+    transform: scale(1);
+    pointer-events: none;
+  }
+  
+  .background-gradient-light::before {
+    background: radial-gradient(20% 50% at 50% 50%,
+        rgba(204, 135, 195, 0.376) 0%,
+        rgba(37, 38, 44, 0) 100%);
+    z-index: -10;
+    content: "";
+    position: absolute;
+    inset: 0px;
+    transform: scale(1);
+    pointer-events: none;
+  }
+}

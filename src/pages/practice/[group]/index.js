@@ -105,7 +105,7 @@ export async function getStaticPaths() {
   const paths = path.map((p) => ({
     params: { group: p.id.toString() },
   }));
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 }
 
 export async function getStaticProps(ctx) {
@@ -133,6 +133,7 @@ export async function getStaticProps(ctx) {
       title: title.title,
       metaTitle: title.title,
     },
+    revalidate: 60 * 10,
   };
 }
 

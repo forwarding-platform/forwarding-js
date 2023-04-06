@@ -251,5 +251,6 @@ export async function getStaticProps(ctx) {
       metaTitle: data?.name || "Quizzes",
       quiz: data,
     },
+    revalidate: 10,
   };
 }

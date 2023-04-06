@@ -31,9 +31,11 @@ import {
   IconHeart,
   IconMessageCircle,
 } from "@tabler/icons-react";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function PostDetailPage({ post, morePost }) {
   const router = useRouter();
@@ -41,6 +43,18 @@ export default function PostDetailPage({ post, morePost }) {
   const theme = useMantineTheme();
   const { bookmarks, mutate } = useBookmark(user);
   const { likes, mutate: likeMutate } = useLike(user);
+  const [related, setRelated] = useState([]);
+  useEffect(() => {
+    axios.post("/api/related_post", { postId: post.id }).then((result) => {
+      supabase
+        .from("post")
+        .select("title, slug")
+        .in("id", result.data.posts)
+        .then((data) => {
+          setRelated(data.data);
+        });
+    });
+  }, [post.id]);
   return (
     <>
       <Container size={"xl"}>
@@ -150,22 +164,23 @@ export default function PostDetailPage({ post, morePost }) {
                   ))}
                 </Card>
               )}
-              <Card shadow="md" mt={"sm"}>
-                <Text className="mb-3 font-semibold">
-                  You might want to read
-                </Text>
-                {morePost.map((p, i) => (
-                  <Box key={i} my={"sm"}>
-                    <Anchor
-                      component={Link}
-                      href={`/post/${p.slug}`}
-                      className="hover:underline-offset-4"
-                    >
-                      <Text size="sm">・ {p.title}</Text>
-                    </Anchor>
-                  </Box>
-                ))}
-              </Card>
+              {related.length !== 0 && (
+                <Card shadow="md" mt={"sm"}>
+                  <Text className="mb-3 font-semibold">You might like</Text>
+
+                  {related.map((p, i) => (
+                    <Box key={i} my={"sm"}>
+                      <Anchor
+                        component={Link}
+                        href={`/post/${p.slug}`}
+                        className="hover:underline-offset-4"
+                      >
+                        <Text size="sm">・ {p.title}</Text>
+                      </Anchor>
+                    </Box>
+                  ))}
+                </Card>
+              )}
             </div>
           </section>
         </div>
@@ -218,6 +233,7 @@ export async function getStaticProps(ctx) {
         morePost: morePost,
         metaTitle: data?.title || "Post",
       },
+      revalidate: 10,
     };
   }
 

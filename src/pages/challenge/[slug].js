@@ -47,7 +47,7 @@ const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
 export default function ChallengePage({ challenge }) {
   const [selectedLang, setSelectedLang] = useState(languageOptions[0].value);
   const [selectedTheme, setSelectedTheme] = useState("vs-dark");
-  const [code, setCode] = useState(languageOptions[0].default.runner);
+  const [code, setCode] = useState(languageOptions[0].default.practice);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState([]);
   const supabase = useSupabaseClient();
@@ -285,6 +285,7 @@ export default function ChallengePage({ challenge }) {
                 lang={
                   languageOptions.find((l) => l.value == selectedLang)?.name
                 }
+                practice={true}
                 theme={selectedTheme}
                 onChange={handleEditorChange}
               />
@@ -401,6 +402,7 @@ export async function getStaticProps(ctx) {
       challenge: data,
       metaTitle: data?.title || "Challenge",
     },
+    revalidate: 30,
   };
 }
 

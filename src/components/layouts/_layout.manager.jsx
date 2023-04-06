@@ -28,10 +28,6 @@ export default function ManagerLayout({ children }) {
 
 const links = [
   {
-    href: "/manager",
-    label: "Dashboard",
-  },
-  {
     href: "/manager/practice",
     label: "Practice Group",
   },

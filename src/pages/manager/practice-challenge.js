@@ -11,6 +11,7 @@ import {
   Group,
   Input,
   NumberInput,
+  ScrollArea,
   Select,
   Text,
   Textarea,
@@ -355,7 +356,10 @@ function HandleUpdate({ row, mutate }) {
           }}
           {...form.getInputProps("content")}
         />
-        <Box className={`${preview ? "block" : "hidden"} basis-1/2`}>
+        <Box
+          component={ScrollArea}
+          className={`${preview ? "block" : "hidden"} basis-1/2`}
+        >
           <MarkdownParser>{form.values.content}</MarkdownParser>
         </Box>
       </div>
@@ -432,7 +436,7 @@ function HandleCreate({ mutate }) {
   const form = useForm({
     initialValues: {
       title: "",
-      content: "",
+      content: `# Problem\n\n\n## Input format\n\n\n## Output format\n\n\n## Constraints\n\n\n## Explanation sample I/O`,
       difficulty: "Easy",
       score: 5,
       practice_id: null,

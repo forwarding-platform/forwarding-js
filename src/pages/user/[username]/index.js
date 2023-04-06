@@ -63,6 +63,7 @@ export default function ProfilePage({ profile }) {
             icon: <IconCheck />,
           });
           modals.closeAll();
+          router.push(router.asPath, null);
         }
         if (error) {
           console.log(error);
@@ -182,13 +183,13 @@ export default function ProfilePage({ profile }) {
 
 ProfilePage.getLayout = (page) => <Layout>{page}</Layout>;
 
-export async function getStaticPaths() {
-  const { data: path } = await supabase.from("profile").select("username");
-  const paths = path.map((p) => ({ params: { username: p.toString() } }));
-  return { paths, fallback: "blocking" };
-}
+// export async function getStaticPaths() {
+//   const { data: path } = await supabase.from("profile").select("username");
+//   const paths = path.map((p) => ({ params: { username: p.toString() } }));
+//   return { paths, fallback: "blocking" };
+// }
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
   const { params } = ctx;
   const { data, error } = await supabase
     .from("profile")

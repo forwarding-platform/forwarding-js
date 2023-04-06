@@ -51,10 +51,10 @@ export const appSubLinks = [
     description: "In-browser Node.js playground powered by Codesandbox",
     href: "/sandbox",
   },
-  {
-    icon: IconHelpCircle,
-    title: "Guide",
-    description: "Learn how to use Apps",
-    href: "/guide",
-  },
+  // {
+  //   icon: IconHelpCircle,
+  //   title: "Guide",
+  //   description: "Learn how to use Apps",
+  //   href: "/guide",
+  // },
 ];

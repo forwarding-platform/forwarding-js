@@ -311,5 +311,6 @@ export async function getStaticProps(ctx) {
       tags: data,
       metaTitle: "New Question",
     },
+    revalidate: 60,
   };
 }

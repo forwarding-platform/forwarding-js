@@ -19,8 +19,16 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { useUser } from "@supabase/auth-helpers-react";
-import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import {
+  IconCheck,
+  IconDots,
+  IconEdit,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,7 +37,41 @@ export default function QuestionPage({ profile }) {
   const router = useRouter();
   const theme = useMantineTheme();
   const user = useUser();
+  const supabase = useSupabaseClient();
   const { bookmarks, mutate } = useBookmark(user);
+  const handleDelete = (id) => {
+    modals.openConfirmModal({
+      title: "Please confirm your action",
+      children: <Text size="sm">Are you sure to delete this question?</Text>,
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onCancel: () => modals.closeAll(),
+      onConfirm: async () => {
+        const { error, data } = await supabase
+          .from("post")
+          .delete()
+          .eq("id", id)
+          .select("id")
+          .single();
+        if (error) {
+          console.log(error);
+          notifications.show({
+            title: "Could not delete question",
+            icon: <IconX />,
+            color: "red",
+          });
+        }
+        if (data.id) {
+          notifications.show({
+            title: "Question deleted successfully",
+            icon: <IconCheck />,
+          });
+          modals.closeAll();
+          router.push(router.asPath, null);
+        }
+      },
+    });
+  };
   if (router.isFallback)
     return (
       <>
@@ -99,7 +141,10 @@ export default function QuestionPage({ profile }) {
                           <Text size={"sm"}>Edit</Text>
                         </Group>
                       </Menu.Item>
-                      <Menu.Item color="red">
+                      <Menu.Item
+                        color="red"
+                        onClick={() => handleDelete(post.id)}
+                      >
                         <Group>
                           <IconTrash strokeWidth={1.5} />
                           <Text size={"sm"}>Delete</Text>
@@ -133,13 +178,13 @@ export default function QuestionPage({ profile }) {
 
 QuestionPage.getLayout = (page) => <Layout>{page}</Layout>;
 
-export async function getStaticPaths() {
-  const { data: path } = await supabase.from("profile").select("username");
-  const paths = path.map((p) => ({ params: { username: p.toString() } }));
-  return { paths, fallback: "blocking" };
-}
+// export async function getStaticPaths() {
+//   const { data: path } = await supabase.from("profile").select("username");
+//   const paths = path.map((p) => ({ params: { username: p.toString() } }));
+//   return { paths, fallback: "blocking" };
+// }
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
   const { params } = ctx;
   const { data, error } = await supabase
     .from("profile")

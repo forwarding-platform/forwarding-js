@@ -32,7 +32,7 @@ export default function QuizPage({ quizzes }) {
 
 QuizPage.getLayout = (page) => <Layout>{page}</Layout>;
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
   const { data, error } = await supabaseAdmin
     .rpc("get_quiz_count_question")
     .select("*")

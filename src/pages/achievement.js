@@ -54,5 +54,6 @@ export async function getStaticProps(ctx) {
       achievements: data || [],
       metaTitle: "Achievements",
     },
+    revalidate: 60 * 5,
   };
 }

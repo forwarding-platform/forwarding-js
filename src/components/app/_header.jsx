@@ -225,9 +225,9 @@ export function AppHeader() {
               <HoverCard.Dropdown sx={{ overflow: "hidden" }}>
                 <Group position="apart" px="md">
                   <Text fw={500}>Apps</Text>
-                  <Anchor href="#" fz="xs">
+                  {/* <Anchor href="#" fz="xs">
                     Explore more
-                  </Anchor>
+                  </Anchor> */}
                 </Group>
 
                 <Divider

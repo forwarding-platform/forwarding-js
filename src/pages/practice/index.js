@@ -55,7 +55,7 @@ PracticePage.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const { data, error } = await supabaseAdmin
     .rpc("get_practice_count_challenge")
     .select("*")

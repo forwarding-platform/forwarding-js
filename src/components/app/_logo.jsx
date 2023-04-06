@@ -22,7 +22,8 @@ export default function AppLogo() {
           fw={"900"}
           variant="gradient"
           gradient={{ from: "purple", to: "indigo", deg: 45 }}
-          className={` font-black hover:animate-move hover:bg-clip-text hover:text-transparent`}
+          // style={{backgroundImage: "linear-gradient(to right, #4338ca,#a21caf)"}}
+          className={` font-black`}
         >
           FORWARDING
         </Text>
