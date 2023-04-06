@@ -191,8 +191,9 @@ export function AppHeader() {
           >
             {headerLinks.map((link, index) => (
               <UnstyledButton
-                component={Link}
-                href={link.href}
+                // component={Link}
+                // href={link.href}
+                onClick={() => router.push(link.href)}
                 key={index}
                 className={cx(classes.link, {
                   [classes.linkActive]: pathname?.startsWith(link.href),
@@ -360,8 +361,9 @@ export function AppHeader() {
 
         {headerLinks.map((link, index) => (
           <UnstyledButton
-            component={Link}
-            href={link.href}
+            // component={Link}
+            // href={link.href}
+            onClick={() => router.push(link.href)}
             key={index}
             className={classes.link}
           >
