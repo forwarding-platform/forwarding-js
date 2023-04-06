@@ -55,7 +55,7 @@ PracticePage.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { data, error } = await supabaseAdmin
     .rpc("get_practice_count_challenge")
     .select("*")
@@ -65,5 +65,6 @@ export async function getServerSideProps() {
       practices: data,
       metaTitle: "Practices",
     },
+    revalidate: 10
   };
 }
