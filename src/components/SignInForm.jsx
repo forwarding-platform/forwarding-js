@@ -35,6 +35,9 @@ export default function SignInForm() {
   const handleGoogleSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: "https://forwarding.vercel.app",
+      },
     });
     if (error) open();
   };

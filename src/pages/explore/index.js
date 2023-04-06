@@ -81,7 +81,7 @@ export default function ExplorePage({ managerList }) {
       {recommend?.length !== 0 && (
         <Title my="md">{user ? "Recommended for you" : "Top posts"}</Title>
       )}
-      {!recommend && (
+      {recommend?.length == 0 && (
         <Center>
           <Loader />
         </Center>
