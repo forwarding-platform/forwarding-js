@@ -7,7 +7,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
-export default function BookmarkPage({ username, userId }) {
+export default function BookmarkPage({ username }) {
   const router = useRouter();
   const user = useUser();
   const supabase = useSupabaseClient();
@@ -36,7 +36,7 @@ export default function BookmarkPage({ username, userId }) {
       </>
     );
   return (
-    <ProfileLayout username={username} userId={userId}>
+    <ProfileLayout username={username}>
       <Stack>
         {isLoading ? (
           <Loader />
@@ -60,15 +60,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(ctx) {
   const { params } = ctx;
-  const { data, error } = await supabase
-    .from("profile")
-    .select("id")
-    .eq("username", params.username)
-    .single();
   return {
     props: {
       username: params.username,
-      userId: data.id,
     },
     revalidate: 30,
   };

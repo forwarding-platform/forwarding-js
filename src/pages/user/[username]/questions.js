@@ -81,7 +81,7 @@ export default function QuestionPage({ profile }) {
       </>
     );
   return (
-    <ProfileLayout username={profile.username} userId={profile.id}>
+    <ProfileLayout username={profile.username}>
       {/* <pre>{JSON.stringify(profile.post, null, 2)}</pre> */}
       {profile.post.length !== 0 ? (
         profile.post.map((post, index) => (

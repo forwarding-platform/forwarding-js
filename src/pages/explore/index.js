@@ -78,13 +78,13 @@ export default function ExplorePage({ managerList }) {
           Admin Panel
         </Button>
       )}
-      {recommend?.length !== 0 && (
-        <Title my="md">{user ? "Recommended for you" : "Top posts"}</Title>
-      )}
       {recommend?.length == 0 && (
         <Center>
           <Loader />
         </Center>
+      )}
+      {recommend?.length !== 0 && (
+        <Title my="md">{user ? "Recommended for you" : "Top posts"}</Title>
       )}
       <Stack>
         {recommend &&

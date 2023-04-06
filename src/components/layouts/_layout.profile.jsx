@@ -45,7 +45,7 @@ import UploadImage from "../UploadImage";
 import { mutate as externalMutate } from "swr";
 import Head from "next/head";
 
-export default function ProfileLayout({ username, children, userId }) {
+export default function ProfileLayout({ username, children }) {
   const { profile, mutate } = useProfile("username", username);
   const user = useUser();
   const pathname = usePathname();
@@ -62,7 +62,7 @@ export default function ProfileLayout({ username, children, userId }) {
       label: "Questions",
     },
   ];
-  if (user && user.id == userId) {
+  if (user && profile.id == user?.id) {
     tabLinks.push({
       href: `/user/${username}/bookmarked`,
       label: "Bookmarked",
