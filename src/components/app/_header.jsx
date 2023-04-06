@@ -361,9 +361,9 @@ export function AppHeader() {
 
         {headerLinks.map((link, index) => (
           <UnstyledButton
-            // component={Link}
-            // href={link.href}
-            onClick={() => router.push(link.href)}
+            component={Link}
+            href={link.href}
+            // onClick={() => router.push(link.href)}
             key={index}
             className={classes.link}
           >
