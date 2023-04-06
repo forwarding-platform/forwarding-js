@@ -12,6 +12,10 @@ export async function middleware(req, respond) {
     data: { session },
   } = await supabase.auth.getSession();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   // Protect `/auth/* routes for signed in users
   if (req.nextUrl.pathname.startsWith("/auth")) {
     if (session) {
@@ -31,7 +35,7 @@ export async function middleware(req, respond) {
     "/challenge",
   ];
   if (featureRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
-    if (!session) {
+    if (!user) {
       return NextResponse.redirect(new URL("/auth/signin", req.url));
     }
   }
