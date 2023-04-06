@@ -72,7 +72,7 @@ export default function QADetailPage({ post, morePost }) {
           radius="md"
           mb="sm"
           onClick={() => {
-            post.type === "blog" ? router.push("/post") : router.push("/qna");
+            router.back();
           }}
           leftIcon={<IconArrowNarrowLeft strokeWidth={1.5} />}
         >

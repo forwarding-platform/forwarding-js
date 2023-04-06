@@ -40,12 +40,15 @@ export default class _Document extends Document {
             content="/favicon/browserconfig.xml"
           />
           <meta name="theme-color" content="#ffffff" />
-          {/* <meta name="referrer" content="no-referrer" /> */}
-          {/* <style
-            dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
-            id="sandpack"
-            key="sandpack-css"
-          /> */}
+          <meta
+            name="description"
+            content="Forwarding is a platform for learning, sharing, and practicing programming skills. Share your knowledge through blog posts, questions, and coding challenges. Practice coding skills in an in-browser code environment."
+          />
+          <meta
+            name="keywords"
+            content="Forwarding, Learn, Share, Practice, Programming, Coding, Blog Posts, Questions, Challenges"
+          />
+          <meta name="author" content="truongduy12" />
         </Head>
         <body>
           <Main />

@@ -145,7 +145,7 @@ export default function SignInForm() {
             {...form.getInputProps("email")}
           />
           <Stack>
-            <Text
+            {/* <Text
               component={Link}
               href="#"
               className="self-end font-medium"
@@ -153,7 +153,7 @@ export default function SignInForm() {
               size="sm"
             >
               Forgot password?
-            </Text>
+            </Text> */}
             <Button size={"md"} mt="lg" type="submit" loading={loading}>
               <Text>Sign In</Text>
             </Button>
