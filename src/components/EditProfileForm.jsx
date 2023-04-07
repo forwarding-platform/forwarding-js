@@ -82,7 +82,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
     if (data) {
       setLoading(false);
       closeModal("editProfile");
-      mutate(["profile-by-username", data.username], data);
+      mutate(["profile-by-username", data.username]);
       if (oldUsername != data.username) {
         router.push(`/user/${data.username}`);
       }
