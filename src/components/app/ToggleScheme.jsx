@@ -20,6 +20,7 @@ export default function ToggleScheme() {
         variant="light"
         size={"xl"}
         radius={"xl"}
+        title="Toggle Scheme"
         onClick={() => toggleColorScheme()}
       >
         {colorScheme === "dark" ? (
