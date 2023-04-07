@@ -341,6 +341,7 @@ export function AppHeader() {
               opened={drawerOpened}
               onClick={toggleDrawer}
               className={classes.hiddenDesktop}
+              title="Open Menu"
               hidden={width < 768 && width >= 767}
             />
           </Group>
