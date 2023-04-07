@@ -84,7 +84,7 @@ export default function EditProfileForm({ profile, skipBtn = false }) {
       closeModal("editProfile");
       mutate(["profile-by-username", data.username], data);
       if (oldUsername != data.username) {
-        router.replace(`/user/${data.username}`);
+        router.push(`/user/${data.username}`);
       }
     }
   });
