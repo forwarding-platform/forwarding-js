@@ -11,6 +11,7 @@ export const useChallengeResult = (user) => {
         .select("practice_challenge_id, score")
         .eq("profile_id", user?.id)
         .throwOnError();
+      console.log(data);
       return data;
     }
   );

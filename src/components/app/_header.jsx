@@ -31,6 +31,8 @@ import {
 import {
   IconChevronDown,
   IconLogout,
+  IconPencil,
+  IconPencilPlus,
   IconSettings2,
   IconShieldLock,
   IconUser,
@@ -300,6 +302,22 @@ export function AppHeader() {
                     href={`/user/${profile.username}`}
                   >
                     Profile
+                  </Menu.Item>
+                  <Menu.Item
+                    py="sm"
+                    icon={<IconPencilPlus size={14} />}
+                    component={Link}
+                    href={`/creator/post`}
+                  >
+                    New post
+                  </Menu.Item>
+                  <Menu.Item
+                    py="sm"
+                    icon={<IconPencilPlus size={14} />}
+                    component={Link}
+                    href={`/creator/question`}
+                  >
+                    New question
                   </Menu.Item>
                   <Menu.Divider />
                   <Menu.Item

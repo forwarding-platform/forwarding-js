@@ -35,7 +35,7 @@ export async function middleware(req, respond) {
     "/challenge",
   ];
   if (featureRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
-    if (!user) {
+    if (!session) {
       return NextResponse.redirect(new URL("/auth/signin", req.url));
     }
   }

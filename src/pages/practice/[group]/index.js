@@ -40,7 +40,7 @@ export default function PracticeGroup({ challenges, title }) {
             : completion == "All"
             ? true
             : completion == "Incomplete"
-            ? data.find((i) => i.practice_challenge_id !== c.id)
+            ? !data.map((i) => i.practice_challenge_id).includes(c.id)
             : completion == "Partly Completed"
             ? data.find(
                 (i) => i.practice_challenge_id == c.id && i.score < c.score
@@ -180,7 +180,9 @@ export function ChallengeCard({ challenge }) {
               </Text>
               {data && (
                 <Text size={"sm"} color="dimmed">
-                  {data.find((i) => i.practice_challenge_id !== challenge.id)
+                  {!data
+                    .map((i) => i.practice_challenge_id)
+                    .includes(challenge.id)
                     ? "[Incomplete]"
                     : data.find((i) => i.score < challenge.score)
                     ? `[Complete: ${(
