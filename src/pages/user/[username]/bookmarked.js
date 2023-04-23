@@ -17,7 +17,7 @@ export default function BookmarkPage({ username }) {
       const { data, error } = await supabase
         .from("profile_bookmark")
         .select(
-          "post_id, post(title, slug, id, post_tag(tag(name)), profile!post_profile_id_fkey(username, name, email, id, avatar_url))"
+          "post_id, post(*, post_tag(tag(name)), profile!post_profile_id_fkey(username, name, email, id, avatar_url))"
         )
         .eq("profile_id", user.id);
       if (error) {

@@ -49,7 +49,7 @@ export default function EditorPage({ tags, post }) {
       postTag: post.post_tag.map((p) => p.tag.id),
       title: post.title,
       content: post.content,
-      image_url: post.image_url,
+      image_url: post.image_url || [],
     },
     validate: {
       postTag: (value) =>
@@ -114,7 +114,7 @@ export default function EditorPage({ tags, post }) {
             content: replaced,
             profile_id: user.id,
             image_url: [
-              ...post.image_url,
+              ...values.image_url,
               uploadedImages.map((i) => i.data.path),
             ],
           })

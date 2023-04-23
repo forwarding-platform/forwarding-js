@@ -41,8 +41,8 @@ export default function QnAPage({ tags }) {
         <div className="flex w-full gap-2">
           <section className="grow">
             <TextInput
-              placeholder="Search posts"
-              label="Search posts"
+              placeholder="Search questions"
+              label="Search questions"
               value={search}
               onChange={(event) => setSearch(event.currentTarget.value)}
               rightSection={isLoading && <Loader variant="oval" size={"sm"} />}

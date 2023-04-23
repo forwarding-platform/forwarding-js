@@ -24,7 +24,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { IconConfetti, IconX } from "@tabler/icons-react";
+import { IconCheck, IconConfetti, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -146,27 +146,28 @@ export default function QuizPlay({ quiz }) {
                 >
                   <Table highlightOnHover>
                     <thead>
-                      <tr>
-                        <th>
+                      <tr className="pb-3">
+                        <td>
                           <Text className="font-bold">
                             {quizzes[index].question}
                           </Text>
-                        </th>
-                        <th></th>
+                        </td>
                       </tr>
                     </thead>
                     <tbody>
                       {quizzes[index].answers.map((a, j) => (
                         <tr key={j}>
-                          <td>{a.content}</td>
                           <td>
-                            {r.correct && r.selected == j
-                              ? "[correct]"
-                              : r.selected == j
-                              ? "[selected]"
-                              : a.correct
-                              ? "[correct]"
-                              : null}
+                            <Group position="apart">
+                              <Text>{a.content}</Text>
+                              {r.correct && r.selected == j ? (
+                                <IconCheck />
+                              ) : r.selected == j ? (
+                                <IconX />
+                              ) : a.correct ? (
+                                <IconCheck />
+                              ) : null}
+                            </Group>
                           </td>
                         </tr>
                       ))}

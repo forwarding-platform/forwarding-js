@@ -29,6 +29,7 @@ import {
   useWindowScroll,
 } from "@mantine/hooks";
 import {
+  IconBookmarks,
   IconChevronDown,
   IconLogout,
   IconPencil,
@@ -198,7 +199,11 @@ export function AppHeader() {
                 // onClick={() => router.push(link.href)}
                 key={index}
                 className={cx(classes.link, {
-                  [classes.linkActive]: pathname?.startsWith(link.href),
+                  [classes.linkActive]:
+                    link.href != "/practice"
+                      ? pathname?.startsWith(link.href)
+                      : pathname?.startsWith(link.href) ||
+                        pathname?.startsWith("/challenge"),
                 })}
               >
                 {link.label}
@@ -318,6 +323,14 @@ export function AppHeader() {
                     href={`/creator/question`}
                   >
                     New question
+                  </Menu.Item>
+                  <Menu.Item
+                    py="sm"
+                    icon={<IconBookmarks size={14} />}
+                    component={Link}
+                    href={`/user/${profile.username}/bookmarked`}
+                  >
+                    Bookmarked
                   </Menu.Item>
                   <Menu.Divider />
                   <Menu.Item

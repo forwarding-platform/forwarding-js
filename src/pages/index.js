@@ -1,4 +1,5 @@
 import Layout from "@/components/layouts/_layout";
+import { supabaseAdmin } from "@/libs/adminSupabase";
 import {
   Button,
   Container,
@@ -97,10 +98,11 @@ const mockdata = [
   },
 ];
 
-export default function Index() {
+export default function Index({ managerList }) {
   const user = useUser();
   const router = useRouter();
   const theme = useMantineTheme();
+  const isManager = user && managerList.includes(user.id);
   const items = mockdata.map((item) => <Feature {...item} key={item.title} />);
 
   return (
@@ -134,6 +136,19 @@ export default function Index() {
             The future of online programming education and community learning.
             Join the Forwarding community today.
           </Title>
+          {isManager && (
+            <Group>
+              <Button
+                component={Link}
+                target="_blank"
+                size="lg"
+                className="mt-8 rounded-xl px-4 py-3 font-medium transition sm:mt-10"
+                href={"/manager/practice"}
+              >
+                Go to Admin Panel
+              </Button>
+            </Group>
+          )}
           {!user && (
             <Group>
               <Button
@@ -175,10 +190,12 @@ export default function Index() {
 
 Index.getLayout = (page) => <Layout>{page}</Layout>;
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
+  const { data, error } = await supabaseAdmin.from("manager").select("id");
   return {
     props: {
       metaTitle: "Home",
+      managerList: data?.map((d) => d.id) || [],
     },
   };
 }

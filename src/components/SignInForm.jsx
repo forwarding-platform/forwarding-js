@@ -137,7 +137,7 @@ export default function SignInForm() {
           labelPosition="center"
         />
         <Text className="mx-auto" my="lg" color="dimmed">
-          Sign in with Email address
+          Sign in with Magic link
         </Text>
         <form onSubmit={handleEmailSignin}>
           <TextInput
@@ -179,6 +179,14 @@ export default function SignInForm() {
           size="sm"
         >
           Don&#39;t have an account?
+        </Text>
+        <Text
+          component={Link}
+          href="/auth/signin-legacy"
+          className="text-center font-medium"
+          size="sm"
+        >
+          Legacy Sign In
         </Text>
       </Stack>
     </>

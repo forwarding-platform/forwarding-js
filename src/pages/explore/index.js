@@ -1,11 +1,9 @@
 import BookmarkIcon from "@/components/BookmarkIcon";
 import Layout from "@/components/layouts/_layout";
-import { supabaseAdmin } from "@/libs/adminSupabase";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import {
   Box,
-  Button,
   Card,
   Center,
   Container,
@@ -36,7 +34,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function ExplorePage({ managerList }) {
+export default function ExplorePage() {
   const { classes } = useStyles();
   const user = useUser();
   const router = useRouter();
@@ -44,7 +42,7 @@ export default function ExplorePage({ managerList }) {
   const { bookmarks, mutate: mutateBookmark } = useBookmark(user);
   const [recommend, setRecommend] = useState([]);
   const supabase = useSupabaseClient();
-  const isManager = user && managerList.includes(user.id);
+  // const isManager = user && managerList.includes(user.id);
   useEffect(() => {
     if (user) {
       axios.post("/api/recommendation", { userId: user.id }).then((result) => {
@@ -73,11 +71,6 @@ export default function ExplorePage({ managerList }) {
   }, [supabase, user]);
   return (
     <Container py="md" size={"lg"}>
-      {isManager && (
-        <Button component={Link} target="_blank" href={"/manager/practice"}>
-          Admin Panel
-        </Button>
-      )}
       {recommend?.length == 0 && (
         <Center>
           <Loader />
@@ -158,11 +151,11 @@ ExplorePage.getLayout = function getLayout(page) {
 };
 
 export async function getServerSideProps(ctx) {
-  const { data, error } = await supabaseAdmin.from("manager").select("id");
+  // const { data, error } = await supabaseAdmin.from("manager").select("id");
   return {
     props: {
       metaTitle: "Explore",
-      managerList: data?.map((d) => d.id) || [],
+      // managerList: data?.map((d) => d.id) || [],
     },
   };
 }

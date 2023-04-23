@@ -199,7 +199,14 @@ export default function ProfileLayout({ username, children }) {
                 alt="Avatar"
                 className="absolute cursor-pointer rounded-full object-cover object-center p-[5px]"
                 onClick={() => {
-                  window.open(profile.avatar_url, "_blank");
+                  window.open(
+                    profile.avatar_url
+                      ? profile.avatar_url.includes("googleusercontent")
+                        ? profile.avatar_url
+                        : `https://kirkgtkhcjuemrllhngq.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                      : `https://robohash.org/${profile.email}`,
+                    "_blank"
+                  );
                 }}
               />
               {user && user?.id == profile.id && (

@@ -150,7 +150,7 @@ export default function SignInPasswordForm() {
             <Text
               component={Link}
               href="#"
-              className="self-end font-medium"
+              className="mt-2 self-end font-medium"
               color={theme.primaryColor}
               size="sm"
             >

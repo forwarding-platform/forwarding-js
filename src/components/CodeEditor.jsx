@@ -21,6 +21,7 @@ export default function CodeEditor({
   return (
     <Editor
       height="70vh"
+      options={{ minimap: { enabled: false } }}
       // width="95%"
       language={lang || "c"}
       value={value}

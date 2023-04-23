@@ -9,8 +9,13 @@ import {
 
 export default function CustomSandPack({ href, theme }) {
   return (
-    <SandpackProvider template={href} theme={theme} style={{ width: "100%" }}>
-      <div className="flex max-h-screen min-h-[80vh] flex-col lg:flex-row">
+    <SandpackProvider
+      template={href}
+      theme={theme}
+      style={{ width: "100%" }}
+      options={{ recompileDelay: 1000, recompileMode: "delayed" }}
+    >
+      <div className="flex h-screen flex-col lg:h-[80vh] lg:flex-row">
         <SandpackFileExplorer className="basis-1/5 overflow-x-auto" />
         <div className="basis-1/2">
           <SandpackCodeEditor
@@ -22,11 +27,17 @@ export default function CustomSandPack({ href, theme }) {
             style={{ height: "100%" }}
             extensions={[autocompletion()]}
             extensionsKeymap={[completionKeymap]}
+            showRunButton
           />
         </div>
-        <div className="flex max-h-[50vh] grow flex-col lg:max-h-fit">
-          <SandpackPreview className="grow basis-1/2" />
-          <SandpackConsole className="grow basis-1/2 overflow-x-auto" />
+        <div className="flex flex-none grow basis-[30%] flex-col overflow-hidden">
+          <SandpackPreview
+            className="flex-none basis-1/2 overflow-scroll"
+            showOpenNewtab
+            showRefreshButton
+            showRestartButton
+          />
+          <SandpackConsole className="flex-none basis-1/2 overflow-scroll" />
         </div>
       </div>
     </SandpackProvider>
