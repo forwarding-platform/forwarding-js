@@ -44,7 +44,7 @@ export const useArticleInfiniteLoading = (type, searchString, tag) => {
       index,
     ],
     async ([key, index]) => {
-      const { from, to } = getPagination(index);
+      // const { from, to } = getPagination(index);
       let query = supabase
         .from("post")
         .select(
@@ -59,7 +59,12 @@ export const useArticleInfiniteLoading = (type, searchString, tag) => {
       }
       const { data, error } = await query
         .order("created_at", { ascending: false })
-        .range(from, to - 1);
+        .order("updated_at", { ascending: false })
+        .order("id")
+        .range(
+          index == 0 ? 0 : index * 10,
+          index == 0 ? 9 : index * 10 + 10 - 1
+        );
       if (error) {
         throw new Error(error);
       }
