@@ -150,6 +150,10 @@ export function AppHeader() {
     user?.id
   );
 
+  useEffect(() => {
+    closeDrawer();
+  }, [closeDrawer, router.pathname]);
+
   const links = appSubLinks.map((item) => (
     <UnstyledButton
       className={classes.subLink}
