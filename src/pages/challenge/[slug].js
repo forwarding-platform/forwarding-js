@@ -151,6 +151,8 @@ export default function ChallengePage({ challenge }) {
         {
           headers: {
             "Content-Type": "application/json",
+            "X-RapidAPI-Key": process.env.NEXT_PUBLIC_API_KEY,
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
           },
         }
       )
@@ -176,6 +178,12 @@ export default function ChallengePage({ challenge }) {
               "base64"
             ),
           })),
+        },
+        {
+          headers: {
+            "X-RapidAPI-Key": process.env.NEXT_PUBLIC_API_KEY,
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+          },
         }
       )
       .then(
@@ -193,7 +201,13 @@ export default function ChallengePage({ challenge }) {
   const getResult = (tokens) => {
     axios
       .get(
-        `${process.env.NEXT_PUBLIC_JUDGE_URL}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=stdout,stderr,status,expected_output,time,compile_output,stdin`
+        `${process.env.NEXT_PUBLIC_JUDGE_URL}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=stdout,stderr,status,expected_output,time,compile_output,stdin`,
+        {
+          headers: {
+            "X-RapidAPI-Key": process.env.NEXT_PUBLIC_API_KEY,
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+          },
+        }
       )
       .then(
         (data) => {

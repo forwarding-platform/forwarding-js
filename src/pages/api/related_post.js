@@ -37,8 +37,7 @@ async function prepareData(supabase) {
  */
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+    return res.status(200).json({ posts: [] });
   } else {
     const supabase = createServerSupabaseClient({ req, res });
     const postId = req.body.postId;

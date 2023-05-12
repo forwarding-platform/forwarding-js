@@ -55,6 +55,8 @@ export default function CodePage() {
         {
           headers: {
             "Content-Type": "application/json",
+            "X-RapidAPI-Key": process.env.NEXT_PUBLIC_API_KEY,
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
           },
         }
       )

@@ -242,6 +242,9 @@ export default function EditorPage({ tags, post }) {
                 label="Markdown Cheat Sheet"
                 variant="outline"
                 color={theme.primaryColor}
+                onClick={() =>
+                  window.open("/markdown-cheat-sheet.md", "_blank")
+                }
               >
                 <IconHelpSmall strokeWidth={1.5} />
               </ActionIcon>
