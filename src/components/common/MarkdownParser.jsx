@@ -27,7 +27,6 @@ export default function MarkdownParser({ children }) {
           h4: "h5",
           h5: "h6",
           h6: "p",
-          blockquote: "pre",
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             return !inline && match ? (
