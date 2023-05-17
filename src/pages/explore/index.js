@@ -1,8 +1,10 @@
 import BookmarkIcon from "@/components/BookmarkIcon";
 import Layout from "@/components/layouts/_layout";
+import { cache } from "@/libs/lru-cache";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import { useBookmark } from "@/utils/hooks/bookmark";
 import {
+  ActionIcon,
   Box,
   Card,
   Center,
@@ -17,6 +19,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { IconRefresh } from "@tabler/icons-react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,6 +50,7 @@ export default function ExplorePage() {
     if (user) {
       axios.post("/api/recommendation", { userId: user.id }).then((result) => {
         const isRecommendation = result.data.posts.length;
+        console.log("result - ", isRecommendation);
         if (isRecommendation > 0)
           supabase
             .rpc("get_top_liked_posts_in_array", {
@@ -77,7 +81,17 @@ export default function ExplorePage() {
         </Center>
       )}
       {recommend?.length !== 0 && (
-        <Title my="md">{user ? "Recommended for you" : "Top posts"}</Title>
+        <Group>
+          <Title my="md">{user ? "Recommended for you" : "Top posts"}</Title>
+          <ActionIcon>
+            <IconRefresh
+              onClick={() => {
+                cache.clear();
+                router.reload();
+              }}
+            />
+          </ActionIcon>
+        </Group>
       )}
       <Stack>
         {recommend &&
