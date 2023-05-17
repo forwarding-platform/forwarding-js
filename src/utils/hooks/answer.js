@@ -27,7 +27,7 @@ export const useAnswers = (postId) => {
     async () => {
       const { data, error } = await supabase
         .from("answer")
-        .select("*, profile(name, username, avatar_url)")
+        .select("*, profile(name, username, avatar_url, email)")
         .eq("post_id", postId)
         .order("created_at", { ascending: false });
       if (error) {
